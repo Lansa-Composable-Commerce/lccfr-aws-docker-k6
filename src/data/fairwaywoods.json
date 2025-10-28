@@ -1,0 +1,262 @@
+[
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "25.0°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "25.0°",
+    "LW3FLTECN": 1
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "12.5°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "12.5°",
+    "LW3FLTECN": 2
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "13.5°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "13.5°",
+    "LW3FLTECN": 2
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "17.0°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "17.0°",
+    "LW3FLTECN": 7
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "15°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "15°",
+    "LW3FLTECN": 11
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "12°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "12°",
+    "LW3FLTECN": 1
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "13°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "13°",
+    "LW3FLTECN": 13
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "14.5°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "14.5°",
+    "LW3FLTECN": 5
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "15.5°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "15.5°",
+    "LW3FLTECN": 2
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "Adjustable",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "Adjustable",
+    "LW3FLTECN": 3
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "13.5° - 14.5°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "13.5° - 14.5°",
+    "LW3FLTECN": 1
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "14.5° - 15.5°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "14.5° - 15.5°",
+    "LW3FLTECN": 1
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "15.0°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "15.0°",
+    "LW3FLTECN": 11
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "16°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "16°",
+    "LW3FLTECN": 2
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "14.0°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "14.0°",
+    "LW3FLTECN": 1
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "16.0°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "16.0°",
+    "LW3FLTECN": 2
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "13.0° - 17.0°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "13.0° - 17.0°",
+    "LW3FLTECN": 1
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "13.0°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "13.0°",
+    "LW3FLTECN": 4
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "17°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "17°",
+    "LW3FLTECN": 17
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "16.5°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "16.5°",
+    "LW3FLTECN": 5
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "21°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "21°",
+    "LW3FLTECN": 3
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "21.0°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "21.0°",
+    "LW3FLTECN": 6
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "19°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "19°",
+    "LW3FLTECN": 8
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "17.5°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "17.5°",
+    "LW3FLTECN": 2
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "18°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "18°",
+    "LW3FLTECN": 5
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "18.5°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "18.5°",
+    "LW3FLTECN": 2
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "17.5 - 18.5°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "17.5 - 18.5°",
+    "LW3FLTECN": 2
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "19.0°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "19.0°",
+    "LW3FLTECN": 7
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "18.0°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "18.0°",
+    "LW3FLTECN": 6
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "17.0° - 21.0°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "17.0° - 21.0°",
+    "LW3FLTECN": 1
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "23°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "23°",
+    "LW3FLTECN": 2
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "20.5°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "20.5°",
+    "LW3FLTECN": 2
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "22.0°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "22.0°",
+    "LW3FLTECN": 2
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "23.0°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "23.0°",
+    "LW3FLTECN": 2
+  },
+  {
+    "LW3FLTTYP": "LOF",
+    "LW3FLTACD": "24.0°",
+    "LW3FLTNCD": 25,
+    "LW3FLTDSC": "24.0°",
+    "LW3FLTECN": 1
+  }
+]
+
+
+
+{
+  label: "Left",
+  value: "left",
+  name: "radio-1",
+  "count": 40
+},
+{
+label: "Right",
+value: "right",
+name: "radio-1",
+"count": 30
+},

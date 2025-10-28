@@ -1,0 +1,362 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@layer base {
+  :root {
+    --color-brand: 24 98 24;
+    --react-international-phone-height: 60px;
+    --react-international-phone-background-color: transparent;
+    --react-international-phone-text-color: #222;
+    --react-international-phone-font-size: 16px;
+    --react-international-phone-border-radius: 0;
+    --react-international-phone-border-color: transparent;
+    --react-international-phone-disabled-background-color: whitesmoke;
+    --react-international-phone-disabled-text-color: #666;
+    --react-international-phone-dropdown-item-font-size: 16px;
+    --react-international-phone-dropdown-top: 70px;
+    --navbar-height: 100px;
+  }
+  html,
+  body {
+    @apply antialiased bg-body text-black01 font-body dark:bg-dark dark:text-white;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+}
+
+body {
+  select {
+    /* Your CSS styles here */
+    color: white;
+    background-color: transparent;
+    border: transparent;
+    padding: 2px;
+  }
+
+  select option {
+    color: #186218;
+  }
+
+  #events img {
+    height: 200px;
+    object-fit: cover;
+    border-radius: 8px 8px 0 0;
+  }
+
+  /* About Us Section */
+  .about-us-bg-green {
+    background-color:  rgb(var(--color-brand) / 0.5);
+  }
+
+  /* Event Section */
+  .event-section {
+    padding: 2rem 0;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .event-container {
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .event-section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 1.5rem;
+    text-align: left;
+  }
+
+  .event-cards {
+    display: grid;
+    grid-template-columns: 1fr 4fr;
+    gap: 1.5rem;
+  }
+
+  .event-card {
+    background-color: #ffffff;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .event-card-image-container {
+    position: relative;
+    height: 200px;
+  }
+
+  .event-card-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .event-badge {
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    background-color: #186218;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .event-card-content {
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .event-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 0.75rem;
+  }
+
+  .event-card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #2d3748;
+  }
+
+  .event-discount {
+    font-size: 0.875rem;
+    font-weight: 600;
+    background-color: #f0fff4;
+    color: #48bb78;
+    padding: 4px 8px;
+    border-radius: 12px;
+  }
+
+  .event-card-date {
+    display: flex;
+    align-items: center;
+    color: #718096;
+    font-size: 0.875rem;
+    margin-bottom: 1rem;
+  }
+
+  .event-card-date i {
+    margin-right: 8px;
+  }
+
+  .event-description {
+    color: #4a5568;
+    font-size: 0.875rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .learn-more-btn {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color:  #186218;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+  }
+
+  .learn-more-btn:hover {
+    color: #38a169;
+  }
+
+  .learn-more-btn i {
+    margin-left: 8px;
+  }
+
+  /* Responsive Design */
+  @media (min-width: 640px) {
+    .event-cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .event-cards {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+}
+
+@layer components {
+  .btn-text {
+    @apply text-base lg:text-xl uppercase tracking-wider;
+  }
+  .page {
+    @apply container mx-auto px-4 pb-10;
+  }
+
+  .card {
+    @apply h-full w-full relative p-2 md:p-4 shadow-card rounded-lg;
+  }
+
+  .main-title {
+    @apply text-lg md:text-3xl lg:text-4.5xl font-semibold text-black01 dark:text-gray-200;
+  }
+
+  .card-title {
+    @apply text-sm sm:text-base lg:text-xl mb-2 font-medium text-black01 dark:text-gray-200;
+  }
+
+  .form-label {
+    @apply text-sm lg:text-base text-black01 dark:text-gray-300;
+  }
+
+  .product-card {
+    @apply h-full w-full flex items-center p-2 md:p-4 shadow-card rounded-lg cursor-pointer;
+  }
+
+  .register-text {
+    @apply typography-text-sm text-black01 font-medium border-b border-white hover:border-slate-800 dark:text-gray-300 dark:border-slate-200;
+  }
+
+  .translate-05 {
+    @apply transition duration-300 hover:-translate-y-0.5;
+  }
+
+  .table-pagination-btn {
+    @apply border rounded px-3 py-1 text-lg hover:text-white01 hover:bg-brand hover:shadow-lg cursor-pointer;
+  }
+
+  .social-links {
+    @apply text-black01 rounded-full p-3 hover:bg-brand hover:text-white cursor-pointer;
+  }
+
+  .svg-icons {
+    @apply cursor-pointer translate-05 size-7 text-black01 dark:text-gray-400 hover:dark:text-white;
+  }
+
+  .product-details-label {
+    @apply;
+  }
+
+  .asterisk-required {
+    @apply text-red-800 dark:text-red-500;
+  }
+
+  .table-list-header {
+  }
+
+  .table-list-data-container {
+    @apply relative sm:pt-0 md:pt-3 mb-3 overflow-hidden rounded-lg bg-white shadow-card transition-all last:mb-0 hover:shadow-large dark:bg-light-dark text-black01;
+  }
+
+  .text-error {
+    @apply text-sm text-red-500 dark:text-red-400;
+  }
+  .list-table-header {
+    @apply text-sm lg:text-base text-gray-500 dark:text-gray-300 lg:block tracking-wider;
+  }
+  .my-product-remove-btn {
+    @apply w-full flex items-center justify-center h-full p-1.5 border border-transparent rounded-md md:rounded-lg hover:text-red-500 hover:bg-red-500/20 hover:border hover:border-red-500 cursor-pointer translate-05;
+  }
+  .brand-spinner {
+    @apply size-5 md:size-6 text-gray-200 animate-spin dark:text-gray-600 fill-primary-500;
+  }
+  .red-spinner {
+    @apply size-5 md:size-6 text-gray-200 animate-spin dark:text-gray-600 fill-red-500;
+  }
+
+  .order-template-container {
+    @apply relative sm:pt-0 md:pt-3 mb-3 rounded-lg bg-white shadow-card transition-all last:mb-0 hover:shadow-large dark:bg-light-dark text-black01;
+  }
+
+  .order-template-list-header {
+    @apply px-2 lg:px-4 py-3 lg:py-6 text-sm lg:text-base tracking-wider text-gray-500 dark:text-gray-300;
+  }
+
+  /*  account settings*/
+
+  .associated-account-card {
+    @apply w-full mb-2 hidden grid-cols-3 gap-6 rounded-lg dark:bg-light-dark lg:grid lg:grid-cols-3 uppercase;
+  }
+
+  .associated-account-card-header {
+    @apply py-3 text-sm lg:text-base tracking-wider text-gray-500 dark:text-gray-300 text-center;
+  }
+
+  .associated-account-card-data-wrapper {
+    @apply shadow-transaction lg:shadow-none px-4 lg:px-0 hover:shadow-transaction  rounded-lg relative grid h-auto grid-cols-2 items-center gap-3 py-4 sm:grid-cols-3 sm:gap-6 sm:py-2 lg:py-3 dark:bg-light-dark;
+  }
+
+  .associated-account-card-data {
+    @apply text-right text-sm lg:text-base font-medium uppercase tracking-wider dark:text-white sm:text-sm sm:col-auto md:text-center flex flex-col sm:items-center sm:justify-center;
+  }
+
+  .associated-account-card-data-span {
+    @apply mb-1 sm:block text-gray-600 dark:text-gray-400 lg:hidden;
+  }
+
+  .user-preference-table-header {
+    @apply px-2 mb-3 hidden grid-cols-5 gap-3 sm:gap-4 rounded-lg bg-white shadow-card dark:bg-light-dark sm:grid md:grid-cols-5 lg:grid-cols-5 uppercase;
+  }
+
+  .user-preference-table-header-text {
+    @apply px-4 py-6 text-sm lg:text-base tracking-wider text-gray-500 dark:text-gray-300;
+  }
+
+  .user-preference-table-data {
+    @apply  py-2 text-sm lg:text-base font-medium uppercase tracking-wider dark:text-white
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  /* Hide scrollbar for IE, Edge and Firefox */
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+  }
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 1px; /* Adjust this value as needed */
+  }
+  /* For better cross-browser compatibility, add styles for other browser engines as well */
+  .scrollbar-thin {
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: #fcfcfc #888; /* Thumb and track color for Firefox */
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: #fcfcfc;
+    border-radius: 1px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background-color: #888;
+  }
+}
+
+.swiper {
+  width: 100%;
+  height: 100%;
+}
+
+.swiper-slide {
+  text-align: center;
+  font-size: 18px;
+  background: #fff;
+
+  /* Center slide text vertically */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.swiper-slide img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
