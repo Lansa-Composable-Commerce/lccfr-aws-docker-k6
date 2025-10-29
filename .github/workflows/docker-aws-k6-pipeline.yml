@@ -105,7 +105,7 @@ jobs:
           git config user.email "dylan.ramirez@lansa.com"
 
           git add package.json
-          git commit -m "ci: bump version to v${PACKAGE_VERSION} [skip ci]" || echo "No version change to commit"
+          git commit -m "$COMMIT_MSG" || echo "No version change to commit"
 
           echo "🌀 Pushing changes..."
           git pull --rebase origin main
