@@ -111,9 +111,6 @@ jobs:
           git pull --rebase origin main
           git push origin HEAD:main
 
-      - name: Log in to GitHub Container Registry
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
-
       - name: Set image tag
         id: vars
         run: |
