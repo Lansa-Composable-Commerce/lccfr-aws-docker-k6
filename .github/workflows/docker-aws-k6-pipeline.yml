@@ -190,6 +190,7 @@ jobs:
 
       - name: Build Docker image
         run: |
+          echo "$IMAGE_NAME:$TAG"
           docker build \
             --build-arg BUILD_MANIFEST=build-manifest.json \
             --build-arg RELEASE_NOTES=release-notes.md \
