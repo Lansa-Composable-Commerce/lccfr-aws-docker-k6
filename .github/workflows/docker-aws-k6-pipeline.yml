@@ -14,7 +14,7 @@ permissions:
   packages: write
 
 env:
-  IMAGE_NAME: ghcr.io/dylanrmrz/lccfr-ci-cd
+  IMAGE_NAME: ghcr.io/dylanrmrz/lccfr-aws-docker-k6
   NODE_ENV: production
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_REGION: us-east-2
