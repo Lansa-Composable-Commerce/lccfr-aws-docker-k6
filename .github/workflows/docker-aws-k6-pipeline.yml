@@ -48,8 +48,8 @@ jobs:
         uses: docker/login-action@v3
         with:
           registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GHCR_PAT }}
+          username: dylanrmrz
+          password: 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
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
