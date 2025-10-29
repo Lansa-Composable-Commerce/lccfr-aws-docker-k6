@@ -36,9 +36,6 @@ env:
 jobs:
   build_and_push:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      packages: write
     outputs:
       full_image: ${{ steps.vars.outputs.full_image }}
     steps:
@@ -52,7 +49,7 @@ jobs:
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
-          password: ${{ secrets.PAT }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -193,13 +190,6 @@ jobs:
           else
             echo "_No linked issues found._" >> release-notes.md
           fi
-
-      - name: Log in to GitHub Container Registry
-        uses: docker/login-action@v3
-        with:
-          registry: ghcr.io
-          username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build Docker image
         run: |
