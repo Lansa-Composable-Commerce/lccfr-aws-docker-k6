@@ -5,7 +5,7 @@ name: Build and Deploy
 on:
   push:
     branches:
-      - master
+      - main
     tags:
       - "*"
 
@@ -102,7 +102,7 @@ jobs:
           echo "Version bumped to $NEW_VERSION"
 
       - name: Commit & push version bump
-        if: github.ref == 'refs/heads/master'
+        if: github.ref == 'refs/heads/main'
         run: |
           git config user.name "dylanrmrz"
           git config user.email "dylan.ramirez@lansa.com"
@@ -111,8 +111,8 @@ jobs:
           git commit -m "ci: bump version to v${PACKAGE_VERSION} [skip ci]" || echo "No version change to commit"
 
           echo "🌀 Pushing changes..."
-          git pull --rebase origin master
-          git push origin HEAD:master
+          git pull --rebase origin main
+          git push origin HEAD:main
 
       - name: Log in to GitHub Container Registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u "${{ github.actor }}" --password-stdin
@@ -121,7 +121,7 @@ jobs:
         id: vars
         run: |
           TAG="${GITHUB_REF_NAME}"
-          if [[ "$TAG" == "master" ]]; then
+          if [[ "$TAG" == "main" ]]; then
             TAG="${PACKAGE_VERSION}"
           fi
 
