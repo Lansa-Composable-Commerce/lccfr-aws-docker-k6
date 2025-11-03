@@ -54,232 +54,232 @@ export default function () {
       cookies: {},
     };
 
-    url = http.url`http://44.209.245.225:4005/api/login`;
-    resp = http.request(
-      "POST",
-      url,
-      `{"Email":"harvey@lna.com","Password":"lansa"}`,
-      params,
-    );
+    // url = http.url`http://44.209.245.225:4005/api/login`;
+    // resp = http.request(
+    //   "POST",
+    //   url,
+    //   `{"Email":"harvey@lna.com","Password":"lansa"}`,
+    //   params,
+    // );
 
-    check(resp, { "status equals 200": (r) => r.status === 200 });
+    // check(resp, { "status equals 200": (r) => r.status === 200 });
 
-    params = {
-      headers: {
-        "Proxy-Connection": `keep-alive`,
-        accept: `application/json`,
-        "content-type": `application/json`,
-        Referer: `http://44.209.245.225:4005/en/accounts`,
-        "Accept-Encoding": `gzip, deflate`,
-        "Accept-Language": `en-US,en;q=0.9`,
-      },
-      cookies: {},
-    };
+    // params = {
+    //   headers: {
+    //     "Proxy-Connection": `keep-alive`,
+    //     accept: `application/json`,
+    //     "content-type": `application/json`,
+    //     Referer: `http://44.209.245.225:4005/en/accounts`,
+    //     "Accept-Encoding": `gzip, deflate`,
+    //     "Accept-Language": `en-US,en;q=0.9`,
+    //   },
+    //   cookies: {},
+    // };
 
-    url = http.url`http://44.209.245.225:4005/api/accounts/004`;
-    resp = http.request("GET", url, null, params);
+    // url = http.url`http://44.209.245.225:4005/api/accounts/004`;
+    // resp = http.request("GET", url, null, params);
 
-    check(resp, { "status equals 200": (r) => r.status === 200 });
+    // check(resp, { "status equals 200": (r) => r.status === 200 });
 
-    params = {
-      headers: {
-        "Proxy-Connection": `keep-alive`,
-        accept: `application/json`,
-        "content-type": `application/json`,
-        Referer: `http://44.209.245.225:4005/en`,
-        "Accept-Encoding": `gzip, deflate`,
-        "Accept-Language": `en-US,en;q=0.9`,
-      },
-      cookies: {},
-    };
+    // params = {
+    //   headers: {
+    //     "Proxy-Connection": `keep-alive`,
+    //     accept: `application/json`,
+    //     "content-type": `application/json`,
+    //     Referer: `http://44.209.245.225:4005/en`,
+    //     "Accept-Encoding": `gzip, deflate`,
+    //     "Accept-Language": `en-US,en;q=0.9`,
+    //   },
+    //   cookies: {},
+    // };
 
-    url = http.url`http://44.209.245.225:4005/api/cart`;
-    resp = http.request("GET", url, null, params);
+    // url = http.url`http://44.209.245.225:4005/api/cart`;
+    // resp = http.request("GET", url, null, params);
 
-    check(resp, { "status equals 200": (r) => r.status === 200 });
+    // check(resp, { "status equals 200": (r) => r.status === 200 });
 
-    params = {
-      headers: {
-        "Proxy-Connection": `keep-alive`,
-        RSC: `1`,
-        "Next-Url": `/en`,
-        "Next-Router-State-Tree": `%5B%22%22%2C%7B%22children%22%3A%5B%5B%22locale%22%2C%22en%22%2C%22d%22%5D%2C%7B%22children%22%3A%5B%22(pages)%22%2C%7B%22children%22%3A%5B%22(page-route)%22%2C%7B%22children%22%3A%5B%22(private)%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2C%22%2Fen%22%2C%22refresh%22%5D%7D%2Cnull%2Cnull%2Ctrue%5D%7D%2Cnull%2Cnull%2Ctrue%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D%7D%2Cnull%2Cnull%5D`,
-        Accept: `*/*`,
-        Referer: `http://44.209.245.225:4005/en`,
-        "Accept-Encoding": `gzip, deflate`,
-        "Accept-Language": `en-US,en;q=0.9`,
-      },
-      cookies: {},
-    };
+    // params = {
+    //   headers: {
+    //     "Proxy-Connection": `keep-alive`,
+    //     RSC: `1`,
+    //     "Next-Url": `/en`,
+    //     "Next-Router-State-Tree": `%5B%22%22%2C%7B%22children%22%3A%5B%5B%22locale%22%2C%22en%22%2C%22d%22%5D%2C%7B%22children%22%3A%5B%22(pages)%22%2C%7B%22children%22%3A%5B%22(page-route)%22%2C%7B%22children%22%3A%5B%22(private)%22%2C%7B%22children%22%3A%5B%22__PAGE__%22%2C%7B%7D%2C%22%2Fen%22%2C%22refresh%22%5D%7D%2Cnull%2Cnull%2Ctrue%5D%7D%2Cnull%2Cnull%2Ctrue%5D%7D%2Cnull%2Cnull%5D%7D%2Cnull%2Cnull%2Ctrue%5D%7D%2Cnull%2Cnull%5D`,
+    //     Accept: `*/*`,
+    //     Referer: `http://44.209.245.225:4005/en`,
+    //     "Accept-Encoding": `gzip, deflate`,
+    //     "Accept-Language": `en-US,en;q=0.9`,
+    //   },
+    //   cookies: {},
+    // };
 
-    url = http.url`http://44.209.245.225:4005/products?category=club+sets&subCategory=Iron+Club+Sets&url=ironclubsets&_rsc=1iiki`;
-    resp = http.request("GET", url, null, params);
+    // url = http.url`http://44.209.245.225:4005/products?category=club+sets&subCategory=Iron+Club+Sets&url=ironclubsets&_rsc=1iiki`;
+    // resp = http.request("GET", url, null, params);
 
-    check(resp, { "status equals 307": (r) => r.status === 307 });
+    // check(resp, { "status equals 307": (r) => r.status === 307 });
 
-    params = {
-      headers: {
-        "Proxy-Connection": `keep-alive`,
-        accept: `application/json`,
-        "content-type": `application/json`,
-        Origin: `http://44.209.245.225:4005`,
-        Referer: `http://44.209.245.225:4005/en/products?category=club+sets&subCategory=Iron+Club+Sets&url=ironclubsets`,
-        "Accept-Encoding": `gzip, deflate`,
-        "Accept-Language": `en-US,en;q=0.9`,
-      },
-      cookies: {},
-    };
+    // params = {
+    //   headers: {
+    //     "Proxy-Connection": `keep-alive`,
+    //     accept: `application/json`,
+    //     "content-type": `application/json`,
+    //     Origin: `http://44.209.245.225:4005`,
+    //     Referer: `http://44.209.245.225:4005/en/products?category=club+sets&subCategory=Iron+Club+Sets&url=ironclubsets`,
+    //     "Accept-Encoding": `gzip, deflate`,
+    //     "Accept-Language": `en-US,en;q=0.9`,
+    //   },
+    //   cookies: {},
+    // };
 
-    url = http.url`http://44.209.245.225:4005/api/cart`;
-    resp = http.request(
-      "POST",
-      url,
-      `{"cartItems":[{"productCode":"1000S","quantity":1}],"type":"add"}`,
-      params,
-    );
+    // url = http.url`http://44.209.245.225:4005/api/cart`;
+    // resp = http.request(
+    //   "POST",
+    //   url,
+    //   `{"cartItems":[{"productCode":"1000S","quantity":1}],"type":"add"}`,
+    //   params,
+    // );
 
-    check(resp, { "status equals 200": (r) => r.status === 200 });
+    // check(resp, { "status equals 200": (r) => r.status === 200 });
 
-    params = {
-      headers: {
-        "Proxy-Connection": `keep-alive`,
-        accept: `application/json`,
-        "content-type": `application/json`,
-        Referer: `http://44.209.245.225:4005/en/checkout`,
-        "Accept-Encoding": `gzip, deflate`,
-        "Accept-Language": `en-US,en;q=0.9`,
-      },
-      cookies: {},
-    };
+    // params = {
+    //   headers: {
+    //     "Proxy-Connection": `keep-alive`,
+    //     accept: `application/json`,
+    //     "content-type": `application/json`,
+    //     Referer: `http://44.209.245.225:4005/en/checkout`,
+    //     "Accept-Encoding": `gzip, deflate`,
+    //     "Accept-Language": `en-US,en;q=0.9`,
+    //   },
+    //   cookies: {},
+    // };
 
-    url = http.url`http://44.209.245.225:4005/api/checkout`;
-    resp = http.request("GET", url, null, params);
+    // url = http.url`http://44.209.245.225:4005/api/checkout`;
+    // resp = http.request("GET", url, null, params);
 
-    check(resp, { "status equals 200": (r) => r.status === 200 });
+    // check(resp, { "status equals 200": (r) => r.status === 200 });
 
-    params = {
-      headers: {
-        "Proxy-Connection": `keep-alive`,
-        accept: `application/json`,
-        "content-type": `application/json`,
-        Referer: `http://44.209.245.225:4005/en/checkout`,
-        "Accept-Encoding": `gzip, deflate`,
-        "Accept-Language": `en-US,en;q=0.9`,
-      },
-      cookies: {},
-    };
+    // params = {
+    //   headers: {
+    //     "Proxy-Connection": `keep-alive`,
+    //     accept: `application/json`,
+    //     "content-type": `application/json`,
+    //     Referer: `http://44.209.245.225:4005/en/checkout`,
+    //     "Accept-Encoding": `gzip, deflate`,
+    //     "Accept-Language": `en-US,en;q=0.9`,
+    //   },
+    //   cookies: {},
+    // };
 
-    url = http.url`http://44.209.245.225:4005/api/cart`;
-    resp = http.request("GET", url, null, params);
+    // url = http.url`http://44.209.245.225:4005/api/cart`;
+    // resp = http.request("GET", url, null, params);
 
-    check(resp, { "status equals 200": (r) => r.status === 200 });
+    // check(resp, { "status equals 200": (r) => r.status === 200 });
 
-    params = {
-      headers: {
-        "Proxy-Connection": `keep-alive`,
-        accept: `application/json`,
-        "content-type": `application/json`,
-        Referer: `http://44.209.245.225:4005/en/checkout`,
-        "Accept-Encoding": `gzip, deflate`,
-        "Accept-Language": `en-US,en;q=0.9`,
-      },
-      cookies: {},
-    };
+    // params = {
+    //   headers: {
+    //     "Proxy-Connection": `keep-alive`,
+    //     accept: `application/json`,
+    //     "content-type": `application/json`,
+    //     Referer: `http://44.209.245.225:4005/en/checkout`,
+    //     "Accept-Encoding": `gzip, deflate`,
+    //     "Accept-Language": `en-US,en;q=0.9`,
+    //   },
+    //   cookies: {},
+    // };
 
-    url = http.url`http://44.209.245.225:4005/api/cart`;
-    resp = http.request("GET", url, null, params);
+    // url = http.url`http://44.209.245.225:4005/api/cart`;
+    // resp = http.request("GET", url, null, params);
 
-    check(resp, { "status equals 200": (r) => r.status === 200 });
+    // check(resp, { "status equals 200": (r) => r.status === 200 });
 
-    params = {
-      headers: {
-        "Proxy-Connection": `keep-alive`,
-        accept: `application/json`,
-        "content-type": `application/json`,
-        Origin: `http://44.209.245.225:4005`,
-        Referer: `http://44.209.245.225:4005/en/checkout`,
-        "Accept-Encoding": `gzip, deflate`,
-        "Accept-Language": `en-US,en;q=0.9`,
-      },
-      cookies: {},
-    };
+    // params = {
+    //   headers: {
+    //     "Proxy-Connection": `keep-alive`,
+    //     accept: `application/json`,
+    //     "content-type": `application/json`,
+    //     Origin: `http://44.209.245.225:4005`,
+    //     Referer: `http://44.209.245.225:4005/en/checkout`,
+    //     "Accept-Encoding": `gzip, deflate`,
+    //     "Accept-Language": `en-US,en;q=0.9`,
+    //   },
+    //   cookies: {},
+    // };
 
-    url = http.url`http://44.209.245.225:4005/api/checkout`;
-    resp = http.request(
-      "POST",
-      url,
-      `{"shipToId":"0","paymentType":"PO","cartHeaderComment":"test","poNumber":"test"}`,
-      params,
-    );
+    // url = http.url`http://44.209.245.225:4005/api/checkout`;
+    // resp = http.request(
+    //   "POST",
+    //   url,
+    //   `{"shipToId":"0","paymentType":"PO","cartHeaderComment":"test","poNumber":"test"}`,
+    //   params,
+    // );
 
-    check(resp, { "status equals 200": (r) => r.status === 200 });
+    // check(resp, { "status equals 200": (r) => r.status === 200 });
 
-    params = {
-      headers: {
-        "Proxy-Connection": `keep-alive`,
-        "Upgrade-Insecure-Requests": `1`,
-        Accept: `text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7`,
-        Referer: `http://44.209.245.225:4005/en/order-confirmation?cartId=94`,
-        "Accept-Encoding": `gzip, deflate`,
-        "Accept-Language": `en-US,en;q=0.9`,
-      },
-      cookies: {},
-    };
+    // params = {
+    //   headers: {
+    //     "Proxy-Connection": `keep-alive`,
+    //     "Upgrade-Insecure-Requests": `1`,
+    //     Accept: `text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7`,
+    //     Referer: `http://44.209.245.225:4005/en/order-confirmation?cartId=94`,
+    //     "Accept-Encoding": `gzip, deflate`,
+    //     "Accept-Language": `en-US,en;q=0.9`,
+    //   },
+    //   cookies: {},
+    // };
 
-    url = http.url`http://44.209.245.225:4005/`;
-    resp = http.request("GET", url, null, params);
+    // url = http.url`http://44.209.245.225:4005/`;
+    // resp = http.request("GET", url, null, params);
 
-    check(resp, { "status equals 307": (r) => r.status === 307 });
+    // check(resp, { "status equals 307": (r) => r.status === 307 });
 
-    params = {
-      headers: {
-        "Proxy-Connection": `keep-alive`,
-        "Upgrade-Insecure-Requests": `1`,
-        Accept: `text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7`,
-        Referer: `http://44.209.245.225:4005/en/order-confirmation?cartId=94`,
-        "Accept-Encoding": `gzip, deflate`,
-        "Accept-Language": `en-US,en;q=0.9`,
-      },
-      cookies: {},
-    };
+    // params = {
+    //   headers: {
+    //     "Proxy-Connection": `keep-alive`,
+    //     "Upgrade-Insecure-Requests": `1`,
+    //     Accept: `text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7`,
+    //     Referer: `http://44.209.245.225:4005/en/order-confirmation?cartId=94`,
+    //     "Accept-Encoding": `gzip, deflate`,
+    //     "Accept-Language": `en-US,en;q=0.9`,
+    //   },
+    //   cookies: {},
+    // };
 
-    url = http.url`http://44.209.245.225:4005/en`;
-    resp = http.request("GET", url, null, params);
+    // url = http.url`http://44.209.245.225:4005/en`;
+    // resp = http.request("GET", url, null, params);
 
-    check(resp, { "status equals 200": (r) => r.status === 200 });
+    // check(resp, { "status equals 200": (r) => r.status === 200 });
 
-    params = {
-      headers: {
-        "Proxy-Connection": `keep-alive`,
-        accept: `application/json`,
-        "content-type": `application/json`,
-        Referer: `http://44.209.245.225:4005/en`,
-        "Accept-Encoding": `gzip, deflate`,
-        "Accept-Language": `en-US,en;q=0.9`,
-      },
-      cookies: {},
-    };
+    // params = {
+    //   headers: {
+    //     "Proxy-Connection": `keep-alive`,
+    //     accept: `application/json`,
+    //     "content-type": `application/json`,
+    //     Referer: `http://44.209.245.225:4005/en`,
+    //     "Accept-Encoding": `gzip, deflate`,
+    //     "Accept-Language": `en-US,en;q=0.9`,
+    //   },
+    //   cookies: {},
+    // };
 
-    url = http.url`http://44.209.245.225:4005/api/cart`;
-    resp = http.request("GET", url, null, params);
+    // url = http.url`http://44.209.245.225:4005/api/cart`;
+    // resp = http.request("GET", url, null, params);
 
-    check(resp, { "status equals 200": (r) => r.status === 200 });
+    // check(resp, { "status equals 200": (r) => r.status === 200 });
 
-    params = {
-      headers: {
-        "Proxy-Connection": `keep-alive`,
-        accept: `application/json`,
-        "content-type": `application/json`,
-        Origin: `http://44.209.245.225:4005`,
-        Referer: `http://44.209.245.225:4005/en`,
-        "Accept-Encoding": `gzip, deflate`,
-        "Accept-Language": `en-US,en;q=0.9`,
-      },
-      cookies: {},
-    };
+    // params = {
+    //   headers: {
+    //     "Proxy-Connection": `keep-alive`,
+    //     accept: `application/json`,
+    //     "content-type": `application/json`,
+    //     Origin: `http://44.209.245.225:4005`,
+    //     Referer: `http://44.209.245.225:4005/en`,
+    //     "Accept-Encoding": `gzip, deflate`,
+    //     "Accept-Language": `en-US,en;q=0.9`,
+    //   },
+    //   cookies: {},
+    // };
 
-    url = http.url`http://44.209.245.225:4005/api/logout`;
-    resp = http.request("POST", url, null, params);
+    // url = http.url`http://44.209.245.225:4005/api/logout`;
+    // resp = http.request("POST", url, null, params);
 
     check(resp, { "status equals 200": (r) => r.status === 200 });
   });
