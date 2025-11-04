@@ -36,7 +36,7 @@ export default function () {
       cookies: {},
     };
 
-    url = http.url`http://44.209.245.225:4005/en/login`;
+    url = http.url`http://172.31.5.135:8080/en/login`;
     resp = http.request("GET", url, null, params);
 
     check(resp, { "status equals 200": (r) => r.status === 200 });
@@ -46,35 +46,35 @@ export default function () {
         "Proxy-Connection": `keep-alive`,
         accept: `application/json`,
         "content-type": `application/json`,
-        Origin: `http://44.209.245.225:4005`,
-        Referer: `http://44.209.245.225:4005/en/login`,
+        Origin: `http://172.31.5.135:8080`,
+        Referer: `http://172.31.5.135:8080/en/login`,
         "Accept-Encoding": `gzip, deflate`,
         "Accept-Language": `en-US,en;q=0.9`,
       },
       cookies: {},
     };
 
-    // url = http.url`http://44.209.245.225:4005/api/login`;
-    // resp = http.request(
-    //   "POST",
-    //   url,
-    //   `{"Email":"harvey@lna.com","Password":"lansa"}`,
-    //   params,
-    // );
+    url = http.url`http://172.31.5.135:8080/api/login`;
+    resp = http.request(
+      "POST",
+      url,
+      `{"Email":"harvey@lna.com","Password":"lansa"}`,
+      params,
+    );
 
-    // check(resp, { "status equals 200": (r) => r.status === 200 });
+    check(resp, { "status equals 200": (r) => r.status === 200 });
 
-    // params = {
-    //   headers: {
-    //     "Proxy-Connection": `keep-alive`,
-    //     accept: `application/json`,
-    //     "content-type": `application/json`,
-    //     Referer: `http://44.209.245.225:4005/en/accounts`,
-    //     "Accept-Encoding": `gzip, deflate`,
-    //     "Accept-Language": `en-US,en;q=0.9`,
-    //   },
-    //   cookies: {},
-    // };
+    params = {
+      headers: {
+        "Proxy-Connection": `keep-alive`,
+        accept: `application/json`,
+        "content-type": `application/json`,
+        Referer: `http://44.209.245.225:4005/en/accounts`,
+        "Accept-Encoding": `gzip, deflate`,
+        "Accept-Language": `en-US,en;q=0.9`,
+      },
+      cookies: {},
+    };
 
     // url = http.url`http://44.209.245.225:4005/api/accounts/004`;
     // resp = http.request("GET", url, null, params);
