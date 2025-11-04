@@ -61,7 +61,7 @@ export default function () {
       `{"Email":"harvey@lna.com","Password":"lansa"}`,
       params,
     );
-    console.log(r.status);
+    
     check(resp, { "status equals 200": (r) => r.status === 200 });
 
     // params = {
