@@ -7,6 +7,8 @@ export const options = {
   thresholds: {
     'http_req_failed{type:login}': ['rate<0.05'], // <5% login failures
     'http_req_failed{type:accounts}': ['rate<0.05'], // <5% accounts failures
+    'checks{type:login}': ['rate>0.95'], // functional success rate
+    'checks{type:cart}': ['rate>0.95'],
   },
 };
 
@@ -72,6 +74,36 @@ export default function () {
   if (accountsRes.status !== 200) {
     console.error(`❌ Accounts request failed: ${accountsRes.status} - ${accountsRes.body}`);
   }
+
+  const cartUrl = 'http://3.132.157.35:8080/cen/CNSCART/cart/add';
+  const cartPayload = JSON.stringify([
+    { productCode: '2W10017', quantity: 1 },
+    { productCode: '2000SX', quantity: 10 },
+    { productCode: '2000S', quantity: 5 },
+    { productCode: '7W10001', quantity: 30 },
+    { productCode: '2W10020', quantity: 100 },
+  ]);
+
+  const cartHeaders = {
+    'Accept-Language': 'en',
+    'Content-Type': 'application/json',
+    'Authorization': `Bearer ${token}`,
+  };
+
+  const cartRes = http.post(cartUrl, cartPayload, {
+    headers: cartHeaders,
+    tags: { type: 'cart' },
+  });
+
+  check(cartRes, {
+    'cart status is 200': (r) => r.status === 200,
+    'cart returned response': (r) => r.body && r.body.length > 0,
+  });
+
+  if (cartRes.status !== 200) {
+    console.error(`❌ Add-to-cart failed: ${cartRes.status} - ${cartRes.body}`);
+  }
+  
 
   // 4️⃣ Simulate user wait time
   sleep(1);
