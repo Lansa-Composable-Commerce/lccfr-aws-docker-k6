@@ -38,7 +38,6 @@ export default function () {
     console.error(`❌ Login failed: ${loginRes.status} - ${loginRes.body}`);
     return;
   }
-  console.log(loginRes.body);
   // 2️⃣ EXTRACT TOKEN
   // Adjust field name depending on your backend's JSON format
   const token =
@@ -104,6 +103,23 @@ export default function () {
     console.error(`❌ Add-to-cart failed: ${cartRes.status} - ${cartRes.body}`);
   }
   
+    // 3️⃣ Place Order
+  const orderPayload = JSON.stringify({
+    shipToId: '0',
+    cartHeaderComment: 'Test Order with Promo Code',
+    paymentType: 'PO',
+    poNumber: 'TESTPO',
+  });
+
+  const orderRes = http.post(ORDER_URL, orderPayload, {
+    headers: authHeaders,
+    tags: { type: 'order' },
+  });
+
+  check(orderRes, {
+    'order success': (r) => r.status === 200 || r.status === 201,
+  });
+
 
   // 4️⃣ Simulate user wait time
   sleep(1);
