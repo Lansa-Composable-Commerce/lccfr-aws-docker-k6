@@ -36,7 +36,7 @@ export default function () {
     console.error(`❌ Login failed: ${loginRes.status} - ${loginRes.body}`);
     return;
   }
-
+  console.log(loginRes.body);
   // 2️⃣ EXTRACT TOKEN
   // Adjust field name depending on your backend's JSON format
   const token =
