@@ -54,7 +54,7 @@ export default function () {
       cookies: {},
     };
 
-    url = http.url`http://172.31.5.135:8080/api/login`;
+    url = http.url`http://3.132.157.35:8080/api/login`;
     resp = http.request(
       "POST",
       url,
