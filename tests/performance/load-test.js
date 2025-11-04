@@ -42,7 +42,8 @@ export default function () {
   const token =
     loginRes.json('access_token') ||
     loginRes.json('token') ||
-    loginRes.json('data.token') ||
+    loginRes.json('data.token') || 
+    loginRes.json('LW3ACSTKN') ||
     null;
 
   if (!token) {
