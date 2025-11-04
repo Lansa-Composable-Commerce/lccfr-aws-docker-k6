@@ -36,7 +36,7 @@ export default function () {
       cookies: {},
     };
 
-    url = http.url`http://172.31.5.135:8080/en/login`;
+    url = http.url`http://lccfr-v2-alb-1240804052.us-east-2.elb.amazonaws.com/en/login`;
     resp = http.request("GET", url, null, params);
 
     check(resp, { "status equals 200": (r) => r.status === 200 });
@@ -46,8 +46,8 @@ export default function () {
         "Proxy-Connection": `keep-alive`,
         accept: `application/json`,
         "content-type": `application/json`,
-        Origin: `http://172.31.5.135:8080`,
-        Referer: `http://172.31.5.135:8080/en/login`,
+        Origin: `http://lccfr-v2-alb-1240804052.us-east-2.elb.amazonaws.com`,
+        Referer: `http://lccfr-v2-alb-1240804052.us-east-2.elb.amazonaws.com/en/login`,
         "Accept-Encoding": `gzip, deflate`,
         "Accept-Language": `en-US,en;q=0.9`,
       },
@@ -69,7 +69,7 @@ export default function () {
         "Proxy-Connection": `keep-alive`,
         accept: `application/json`,
         "content-type": `application/json`,
-        Referer: `http://44.209.245.225:4005/en/accounts`,
+        Referer: `http://lccfr-v2-alb-1240804052.us-east-2.elb.amazonaws.com/en/accounts`,
         "Accept-Encoding": `gzip, deflate`,
         "Accept-Language": `en-US,en;q=0.9`,
       },
