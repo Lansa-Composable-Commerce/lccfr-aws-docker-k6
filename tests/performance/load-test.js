@@ -81,34 +81,33 @@
 //   sleep(1);
 // }
 
-// tests/performance/load-test.js
 import http from "k6/http";
 import { check, sleep, group } from "k6";
 import { Counter } from "k6/metrics";
 
-// Track failed requests explicitly
+// Counter for failed requests
 export const failedRequests = new Counter("failed_requests");
 
-// Define test stages (load pattern)
+// k6 options
 export const options = {
   stages: [
-    { duration: "5s", target: 5 },   // ramp up to 5 VUs
-    { duration: "20s", target: 10 }, // steady 10 VUs
+    { duration: "5s", target: 5 },   // ramp up
+    { duration: "20s", target: 10 }, // steady
     { duration: "5s", target: 0 },   // ramp down
   ],
   thresholds: {
-    http_req_duration: ["p(95)<500"], // 95% of requests under 500ms
-    http_req_failed: ["rate<0.05"],   // <5% failure rate allowed
+    http_req_duration: ["p(95)<500"], // 95% requests < 500ms
+    http_req_failed: ["rate<0.05"],   // allow 5% failures
   },
 };
 
-// Base URL of your API (use full accessible URL if GitHub Actions runs this)
-const BASE_URL = "http:/3.132.157.35:8080/api";
+// Base URL (make configurable with environment variable if needed)
+const BASE_URL = __ENV.BASE_URL || "http://3.132.157.35:8080/api";
 
 // Login credentials
 const credentials = {
-  Email: "harvey@lna.com",
-  Password: "lansa",
+  Email: "jansub1@test.com",
+  Password: "Lansa123",
 };
 
 // HTTP headers
@@ -119,7 +118,7 @@ const params = {
   },
 };
 
-// Main test logic
+// Main test
 export default function () {
   group("User Login Test", function () {
     const res = http.post(`${BASE_URL}/login`, JSON.stringify(credentials), params);
@@ -134,6 +133,6 @@ export default function () {
     }
   });
 
-  sleep(1); // short delay between requests
+  sleep(1); // pause between requests
 }
 
