@@ -245,12 +245,12 @@ jobs:
         run: |
           k6 run tests/performance/load-test.js
 
-      - name: Upload k6 results as artifact (optional)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: k6-results
-          path: k6-results/
+      # - name: Upload k6 results as artifact (optional)
+      #   if: always()
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: k6-results
+      #     path: k6-results/
 
       # Optional: Fail workflow if performance thresholds are violated
       - name: Check thresholds
