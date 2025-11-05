@@ -70,6 +70,7 @@ export default function () {
     'Authorization': bearerToken,
   };
 
+
   const accountsRes = http.get(accountsUrl, { headers: accountsHeaders, tags: { type: 'accounts' } });
 
   check(accountsRes, {
@@ -92,9 +93,10 @@ export default function () {
 
   const cartHeaders = {
     'Accept-Language': 'en',
-    'Content-Type': 'application/json',
-    'Authorization': `Bearer ${token}`,
+    'Content-Type': 'text/plain',
+    'Authorization': bearerToken,
   };
+
 
   const cartRes = http.post(cartUrl, cartPayload, {
     headers: cartHeaders,
@@ -111,6 +113,13 @@ export default function () {
   }
   
     // 3️⃣ Place Order
+    const poHeaders = {
+    'Accept-Language': 'en',
+    'Content-Type': 'text/plain',
+    'Authorization': bearerToken,
+  };
+
+
   const orderPayload = JSON.stringify({
     shipToId: '0',
     cartHeaderComment: 'Test Order with Promo Code',
@@ -119,7 +128,7 @@ export default function () {
   });
 
   const orderRes = http.post(orderUrl, orderPayload, {
-    headers: authHeaders,
+    headers: poHeaders,
     tags: { type: 'order' },
   });
 
