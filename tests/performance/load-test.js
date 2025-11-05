@@ -93,7 +93,7 @@ export default function () {
 
   const cartHeaders = {
     'Accept-Language': 'en',
-    'Content-Type': 'text/plain',
+    'Content-Type': 'application/json',
     'Authorization': bearerToken,
   };
 
@@ -115,7 +115,7 @@ export default function () {
     // 3️⃣ Place Order
     const poHeaders = {
     'Accept-Language': 'en',
-    'Content-Type': 'text/plain',
+    'Content-Type': 'application/json',
     'Authorization': bearerToken,
   };
 
