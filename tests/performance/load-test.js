@@ -32,7 +32,7 @@ export default function () {
     'Accept-Language': 'en',
     'Content-Type': 'application/json',
     'Cookie':
-      'ce_ac_token=eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJ4dHJhcyI6eyJjZUdVSUQiOiIzNWIzNGMwMjU5MDhlOGRlNGE4MzY4YWQzZjQ0MDJhNGUwNmU4MTMxOThjMWI5NzA4YWQ2YWRhNjZhYWM0NTVkIiwiY2VVc2VyTmFtZSI6ImphbiIsImNlRW1haWwiOiJqYW5wYW9sby5tZXRpY2FAbGFuc2EuY29tIiwiY2VGaXJzdE5hbWUiOiJKYW4iLCJjZUxhc3ROYW1lIjoiTWV0aWNhIn0sImlhdCI6MTc2MjMyMzgwNCwiZXhwIjoxNzYyMzI0NDA0fQ.aJdNiiIFMaXltViDN4WYZ4VlCxSzUxYgPp5i0aTEHmmVKKjdLPeqPT4_KT7_l6nR; ce_rf_token=eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJ4dHJhcyI6e30sImlhdCI6MTc2MjMyMzgwNCwiZXhwIjoxNzY0OTE1ODA0fQ.apQeibEvKVeNLMSCxmDka93pc0KkTUoHAa20YvOdKrGAg4ulN4if0HZJ7HnosukE',
+      'ce_ac_token=eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJ4dHJhcyI6eyJjZUdVSUQiOiIzNWIzNGMwMjU5MDhlOGRlNGE4MzY4YWQzZjQ0MDJhNGUwNmU4MTMxOThjMWI5NzA4YWQ2YWRhNjZhYWM0NTVkIiwiY2VVc2VyTmFtZSI6ImphbiIsImNlRW1haWwiOiJqYW5wYW9sby5tZXRpY2FAbGFuc2EuY29tIiwiY2VGaXJzdE5hbWUiOiJKYW4iLCJjZUxhc3ROYW1lIjoiTWV0aWNhIn0sImlhdCI6MTc2MjMyMzgwNCwiZXhwIjoxNzYyMzI0NDA0fQ.aJdNiiIFMaXltViDN4WYZ4VlCxSzUxYgPp5i0aTEHmmVKKjdLPeqPT4_KT7_l6nR;ce_rf_token=eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJ4dHJhcyI6e30sImlhdCI6MTc2MjMyMzgwNCwiZXhwIjoxNzY0OTE1ODA0fQ.apQeibEvKVeNLMSCxmDka93pc0KkTUoHAa20YvOdKrGAg4ulN4if0HZJ7HnosukE',
   };
   const loginRes = http.post(loginUrl, loginPayload, { headers: loginHeaders, tags: { type: 'login' } });
 
@@ -82,18 +82,18 @@ export default function () {
   }
 
   const cartPayload = JSON.stringify([
-    { productCode: '2W10017', quantity: 1 },
-    { productCode: '2000SX', quantity: 10 },
-    { productCode: '2000S', quantity: 5 },
-    { productCode: '7W10001', quantity: 30 },
-    { productCode: '2W10020', quantity: 100 },
+    { "productCode": "2W10017", "quantity": 1 },
+    { "productCode": "2000SX", "quantity": 10 },
+    { "productCode": "2000S", "quantity": 5 },
+    { "productCode": "7W10001", "quantity": 30 },
+    { "productCode": "2W10020", "quantity": 100 },
   ]);
 
   const cartHeaders = {
     'Accept-Language': 'en',
     'Content-Type': 'application/json',
     'Authorization': bearerToken,
-    'Cookie': 'ce_ac_token=eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJ4dHJhcyI6eyJjZUdVSUQiOiIzNWIzNGMwMjU5MDhlOGRlNGE4MzY4YWQzZjQ0MDJhNGUwNmU4MTMxOThjMWI5NzA4YWQ2YWRhNjZhYWM0NTVkIiwiY2VVc2VyTmFtZSI6ImphbiIsImNlRW1haWwiOiJqYW5wYW9sby5tZXRpY2FAbGFuc2EuY29tIiwiY2VGaXJzdE5hbWUiOiJKYW4iLCJjZUxhc3ROYW1lIjoiTWV0aWNhIn0sImlhdCI6MTc2MjMyMzgwNCwiZXhwIjoxNzYyMzI0NDA0fQ.aJdNiiIFMaXltViDN4WYZ4VlCxSzUxYgPp5i0aTEHmmVKKjdLPeqPT4_KT7_l6nR; ce_rf_token=eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJ4dHJhcyI6e30sImlhdCI6MTc2MjMyMzgwNCwiZXhwIjoxNzY0OTE1ODA0fQ.apQeibEvKVeNLMSCxmDka93pc0KkTUoHAa20YvOdKrGAg4ulN4if0HZJ7HnosukE',
+    'Cookie': 'ce_ac_token=eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJ4dHJhcyI6eyJjZUdVSUQiOiIzNWIzNGMwMjU5MDhlOGRlNGE4MzY4YWQzZjQ0MDJhNGUwNmU4MTMxOThjMWI5NzA4YWQ2YWRhNjZhYWM0NTVkIiwiY2VVc2VyTmFtZSI6ImphbiIsImNlRW1haWwiOiJqYW5wYW9sby5tZXRpY2FAbGFuc2EuY29tIiwiY2VGaXJzdE5hbWUiOiJKYW4iLCJjZUxhc3ROYW1lIjoiTWV0aWNhIn0sImlhdCI6MTc2MjMyMzgwNCwiZXhwIjoxNzYyMzI0NDA0fQ.aJdNiiIFMaXltViDN4WYZ4VlCxSzUxYgPp5i0aTEHmmVKKjdLPeqPT4_KT7_l6nR;ce_rf_token=eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJ4dHJhcyI6e30sImlhdCI6MTc2MjMyMzgwNCwiZXhwIjoxNzY0OTE1ODA0fQ.apQeibEvKVeNLMSCxmDka93pc0KkTUoHAa20YvOdKrGAg4ulN4if0HZJ7HnosukE',
   
   };
 
