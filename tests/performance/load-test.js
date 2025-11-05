@@ -82,7 +82,6 @@ export default function () {
     console.error(`❌ Accounts request failed: ${accountsRes.status} - ${accountsRes.body}`);
   }
 
-
   const cartPayload = JSON.stringify([
     { productCode: '2W10017', quantity: 1 },
     { productCode: '2000SX', quantity: 10 },
@@ -95,8 +94,9 @@ export default function () {
     'Accept-Language': 'en',
     'Content-Type': 'application/json',
     'Authorization': bearerToken,
+    'Cookie':
+      'ce_ac_token=eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJ4dHJhcyI6eyJjZUdVSUQiOiIzYTMwNzkxZDJlZGIxOWFmY2I2MzZlY2Q0YzQzMmFkNjFkNDliYTIzMDAzZGY3MjAxNTY2ODAxODBiNDFkOTAxIiwiY2VVc2VyTmFtZSI6ImhhcnZleSIsImNlRW1haWwiOiJoYXJ2ZXlAbG5hLmNvbSIsImNlRmlyc3ROYW1lIjoiSGFydmV5IiwiY2VMYXN0TmFtZSI6IldhbGxiYW5nZXIifSwiaWF0IjoxNzYyMjI3NDcwLCJleHAiOjE3NjIyMjgwNzB9.SXzgguvj_0DFN9TRTt74ZSkOGJwH6No885Ul4Jzdow9crQT4yriCzNFLrkLhMU4B; ce_rf_token=eyJhbGciOiJIUzM4NCIsInR5cCI6IkpXVCJ9.eyJ4dHJhcyI6e30sImlhdCI6MTc2MjIyNzQ3MCwiZXhwIjoxNzY0ODE5NDcwfQ.c3t0aNh9dcvi7ZfnumTjn9fAjwDludTyknDAK5WP5GSM7lzRMesf-41ZLbwT0Fv',
   };
-
 
   const cartRes = http.post(cartUrl, cartPayload, {
     headers: cartHeaders,
