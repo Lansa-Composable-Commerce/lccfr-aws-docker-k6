@@ -16,7 +16,7 @@ export const options = {
 const BASE_URL = 'http://3.132.157.35:8080/cen';  
 const loginUrl = `${BASE_URL}/CNSLOGIN/login`;
 const accountsUrl = `${BASE_URL}/CNSACTSEL/accounts`;
-const cartUrl = `${BASE_URL}/cen/CNSCART/cart/add`;
+const cartUrl = `${BASE_URL}/CNSCART/cart/add`;
 const orderUrl = `${BASE_URL}/CNSCHKOUT/placeorder`;
 
 
