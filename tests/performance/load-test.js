@@ -237,11 +237,15 @@ export const options = {
   duration: '20s',
   thresholds: {
     'http_req_failed{type:login}': ['rate<0.05'],
+    'http_req_failed{type:accounts}': ['rate<0.05'],
     'http_req_failed{type:cart}': ['rate<0.05'],
     'http_req_failed{type:order}': ['rate<0.05'],
+    'http_req_failed{type:prodcategory}': ['rate<0.05'],
     'checks{type:login}': ['rate>0.95'],
+    'checks{type:accounts}': ['rate>0.95'],
     'checks{type:cart}': ['rate>0.95'],
     'checks{type:order}': ['rate>0.95'],
+    'checks{type:prodcategory}': ['rate>0.95'],
   },
 };
 
@@ -308,7 +312,7 @@ export default function () {
 
   const accountsRes = http.get(accountsUrl, {
     headers: accountsHeaders,
-    tags: { type: 'accounts' },
+    tags: { type: 'prodcategory' },
   });
 
   check(accountsRes, {
