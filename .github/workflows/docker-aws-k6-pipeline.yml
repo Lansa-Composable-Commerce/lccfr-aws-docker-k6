@@ -30,41 +30,39 @@ env:
   ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
   ECS_SERVICE: ${{ secrets.ECS_SERVICE }}
   TASK_FAMILY: ${{ secrets.TASK_FAMILY }}
-
+  INFLUX_URL: 3.138.69.205:8086
+  INFLUXDB_DB: mydb
+  INFLUXDB_USER: admin
+  INFLUXDB_PASS: admin123
 jobs:
   performance-test:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
 
-      - name: Install k6
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: build-artifacts
+
+      - name: Run K6
         run: |
-          sudo apt-get update
-          sudo apt-get install -y gnupg software-properties-common
-          curl -s https://dl.k6.io/key.gpg | sudo apt-key add -
-          echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
-          sudo apt-get update
-          sudo apt-get install -y k6
-
-      - name: Run k6 performance tests
-        run: |
-          k6 run tests/performance/load-test.js
-
-      - name: Upload k6 results as artifact (optional)
-        if: always()
+          docker run -i \
+            -v $PWD:/app \
+            -w /app \
+            grafana/k6:latest \
+              run --tag test_cycle=${{ github.run_id }} \
+              --out influxdb=http://${{ secrets.INFLUXDB_USER }}:${{ secrets.INFLUXDB_PASS }}@${INFLUX_URL}/${INFLUXDB_DB} \
+              --summary-export results/summary.json \
+              tests/performance/load-test.js
+              
+      - name: Upload results
         uses: actions/upload-artifact@v4
         with:
           name: k6-results
-          path: k6-results/
+          path: results/
 
-      # Optional: Fail workflow if performance thresholds are violated
-      - name: Check thresholds
-        if: failure()
-        run: |
-          echo "❌ Performance thresholds failed. Please check k6 results."
-          exit 1
-  
+      
 
 
 # # Version bump Logic
