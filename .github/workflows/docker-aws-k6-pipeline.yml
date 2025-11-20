@@ -38,38 +38,40 @@ env:
   INFLUX_PASS: "admin123"
 
 jobs:
-  load_test:
+  performance-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # - name: Download artifacts
-      #   uses: actions/download-artifact@v4
-      #   with:
-      #     name: build-artifacts
-
-      - name: Run K6 load test
+      - name: Install k6
         run: |
-          mkdir -p results
-          echo "Running k6 load test..."
+          sudo apt-get update
+          sudo apt-get install -y gnupg software-properties-common
+          curl -s https://dl.k6.io/key.gpg | sudo apt-key add -
+          echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install -y k6
 
-          docker run --rm -i \
-            -v "${{ github.workspace }}:/app" \
-            -w /app \
-            grafana/k6:latest \
-            run --tag test_cycle=${{ github.run_id }} \
+      - name: Run k6 performance tests
+        run: |
+          k6 --tag test_cycle=${{ github.run_id }} \
                 --out influxdb=http://$INFLUX_USER:$INFLUX_PASS@${INFLUX_URL}/${INFLUX_DB} \
                 --summary-export=results/summary.json \
                 tests/performance/load-test.js
 
-
-      - name: Check results
-        run: ls -l results
-
-      - name: Upload results
+      - name: Upload k6 results as artifact (optional)
+        if: always()
         uses: actions/upload-artifact@v4
         with:
           name: k6-results
-          path: results/**
-          if-no-files-found: error
+          path: k6-results/
+
+      # Optional: Fail workflow if performance thresholds are violated
+      - name: Check thresholds
+        if: failure()
+        run: |
+          echo "❌ Performance thresholds failed. Please check k6 results."
+          exit 1
+
 
