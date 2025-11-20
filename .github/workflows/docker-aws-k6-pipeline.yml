@@ -32,44 +32,46 @@ env:
   ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
   ECS_SERVICE: ${{ secrets.ECS_SERVICE }}
   TASK_FAMILY: ${{ secrets.TASK_FAMILY }}
-  INFLUX_URL: "3.144.130.123:8086"
-  INFLUX_DB: "mydb"
-  INFLUX_USER: "admin"
-  INFLUX_PASS: "admin123"
 
 jobs:
   performance-test:
     runs-on: ubuntu-latest
+    env:
+      INFLUX_URL: "3.144.130.123:8086"
+      INFLUX_DB: "mydb"
+      INFLUX_USER: "admin"
+      INFLUX_PASS: "admin123"
+
     steps:
-      - name: Checkout repository
+      - name: Checkout repo
         uses: actions/checkout@v4
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
 
-      - name: Run K6 load test
+      - name: Install k6
+        run: |
+          sudo apt update
+          sudo apt install -y gnupg2 software-properties-common
+          curl -s https://dl.k6.io/key.gpg | sudo apt-key add -
+          echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt update
+          sudo apt install -y k6
+
+      - name: Run k6 Test
         run: |
           mkdir -p results
-          echo "Running k6 load test..."
+          k6 run \
+            --out json=results/result.json \
+            --out influxdb=v1=http://${{ env.INFLUXDB_USER }}:${{ env.INFLUXDB_PASS }}@${{ env.INFLUXDB_URL }}/write?db=${{ env.INFLUXDB_DB }} \
+            --vus 10 \
+            --duration 30s \
+            tests/performance/test.js
 
-          docker run --rm -v "${{ github.workspace }}:/app" -w /app grafana/k6:latest \
-            run --tag test_cycle=${{ github.run_id }} \
-                --out influxdb=http://$INFLUX_USER:$INFLUX_PASS@${INFLUX_URL}/${INFLUX_DB} \
-                --summary-export=results/summary.json \
-                tests/performance/load-test.js
-
-
-
-      - name: Upload k6 results as artifact (optional)
-        if: always()
+      - name: Upload results artifact
         uses: actions/upload-artifact@v4
         with:
           name: k6-results
           path: results/
-
-      # Optional: Fail workflow if performance thresholds are violated
-      - name: Check thresholds
-        if: failure()
-        run: |
-          echo "❌ Performance thresholds failed. Please check k6 results."
-          exit 1
-
-
