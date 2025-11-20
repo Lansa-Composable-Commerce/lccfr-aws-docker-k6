@@ -48,19 +48,22 @@ jobs:
       #   with:
       #     name: build-artifacts
 
-      - name: Run K6
+      - name: Run K6 load test
         run: |
+          # Ensure results folder exists on host
           mkdir -p results
-          echo "Running k6 load test..."
 
+          # Run k6 inside Docker
           docker run --rm -i \
             -v "${{ github.workspace }}:/app" \
             -w /app \
             grafana/k6:latest \
-            run --tag test_cycle=${{ github.run_id }} \
-                --out influxdb=http://$INFLUX_USER:$INFLUX_PASS@${INFLUX_URL}/${INFLUX_DB} \
-                --summary-export=results/summary.json \
-                tests/performance/load-test.js
+            sh -c "mkdir -p results && \
+                  echo 'Running k6...' && \
+                  k6 run --tag test_cycle=${{ github.run_id }} \
+                          --out influxdb=http://$INFLUX_USER:$INFLUX_PASS@${INFLUX_URL}/${INFLUX_DB} \
+                          --summary-export=results/summary.json \
+                          tests/performance/load-test.js"
 
       - name: Check results
         run: ls -l results
@@ -71,3 +74,4 @@ jobs:
           name: k6-results
           path: results/**
           if-no-files-found: error
+
