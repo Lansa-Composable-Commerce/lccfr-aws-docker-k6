@@ -51,6 +51,7 @@ jobs:
       - name: Run K6 load test
         run: |
           mkdir -p results
+          echo "Running k6 load test..."
 
           docker run --rm -i \
             -v "${{ github.workspace }}:/app" \
