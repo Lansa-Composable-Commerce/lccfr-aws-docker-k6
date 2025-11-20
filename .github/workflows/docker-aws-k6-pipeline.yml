@@ -50,6 +50,7 @@ jobs:
 
       - name: Run K6
         run: |
+          mkdir -p results
           docker run -i \
             -v $PWD:/app \
             -w /app \
