@@ -62,13 +62,13 @@ jobs:
                 tests/performance/load-test.js
 
 
-            - name: Check results
-              run: ls -l results
+      - name: Check results
+        run: ls -l results
 
-            - name: Upload results
-              uses: actions/upload-artifact@v4
-              with:
-                name: k6-results
-                path: results/**
-                if-no-files-found: error
+      - name: Upload results
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-results
+          path: results/**
+          if-no-files-found: error
 
