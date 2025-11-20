@@ -57,12 +57,12 @@ jobs:
             grafana/k6:latest \
               run --tag test_cycle=${{ github.run_id }} \
               --out influxdb=http://$INFLUX_USER:$INFLUX_PASS@${INFLUX_URL}/${INFLUX_DB} \
-              --summary-export results/summary.json \
+              --summary-export=results/summary.json \
               tests/performance/load-test.js
 
       - name: Upload results
         uses: actions/upload-artifact@v4
         with:
-          name: results
+          name: k6-results
           path: results/**
-          if-no-files-found: warn
+          if-no-files-found: error
