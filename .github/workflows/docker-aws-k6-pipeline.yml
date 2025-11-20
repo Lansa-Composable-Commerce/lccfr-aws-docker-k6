@@ -32,7 +32,7 @@ env:
   ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
   ECS_SERVICE: ${{ secrets.ECS_SERVICE }}
   TASK_FAMILY: ${{ secrets.TASK_FAMILY }}
-  INFLUX_URL: "3.138.69.205:8086"
+  INFLUX_URL: "3.144.130.123:8086"
   INFLUXDB_DB: "mydb"
 
 jobs:
