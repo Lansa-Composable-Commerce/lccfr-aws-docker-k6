@@ -44,18 +44,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install k6
+      - name: Run K6 load test
         run: |
-          sudo apt-get update
-          sudo apt-get install -y gnupg software-properties-common
-          curl -s https://dl.k6.io/key.gpg | sudo apt-key add -
-          echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
-          sudo apt-get update
-          sudo apt-get install -y k6
-
-      - name: Run k6 performance tests
-        run: |
-          k6 --tag test_cycle=${{ github.run_id }} \
+          mkdir -p results
+          echo "Running k6 load test..."
+          docker run --rm -i \
+            -v "${{ github.workspace }}:/app" \
+            -w /app \
+            grafana/k6:latest \
+            run --tag test_cycle=${{ github.run_id }} \
                 --out influxdb=http://$INFLUX_USER:$INFLUX_PASS@${INFLUX_URL}/${INFLUX_DB} \
                 --summary-export=results/summary.json \
                 tests/performance/load-test.js
@@ -65,7 +62,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: k6-results
-          path: k6-results/
+          path: results/
 
       # Optional: Fail workflow if performance thresholds are violated
       - name: Check thresholds
