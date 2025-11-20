@@ -41,10 +41,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: build-artifacts
+      # - name: Download artifacts
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: build-artifacts
 
       - name: Run K6
         run: |
