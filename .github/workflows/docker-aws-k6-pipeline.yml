@@ -64,11 +64,10 @@ jobs:
         run: |
           mkdir -p results
           k6 run \
-            --out json=results/result.json \
-            --out influxdb=v1=${{ env.INFLUXDB_URL }}/write?db=${{ env.INFLUXDB_DB }} \
-            --vus 10 \
-            --duration 30s \
-            tests/performance/test.js
+            --tag test_cycle=${{ github.run_id }} \
+            --out influxdb=v1=http://${{ env.INFLUXDB_USER }}:${{ env.INFLUXDB_PASS }}@${{ env.INFLUXDB_URL }}/${{ env.INFLUXDB_DB }} \
+            --summary-export=results/summary.json \
+            tests/performance/load-test.js
 
 
       - name: Upload results artifact
