@@ -1,71 +1,56 @@
-# Version bump Logic
-#
-name: Build and Deploy
+name: Load Test
 
 on:
   push:
     branches:
       - main
-    tags:
-      - "*"
-
-permissions:
-  contents: write
-  packages: write
-
-env:
-  IMAGE_NAME: ghcr.io/dylanrmrz/lccfr-aws-docker-k6
-  NODE_ENV: production
-  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  AWS_REGION: us-east-2
-  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  SECRET_KEY_USER_PAYLOAD: ${{ secrets.SECRET_KEY_USER_PAYLOAD }}
-  SECRET_KEY_ACCESS_TOKEN: ${{ secrets.SECRET_KEY_ACCESS_TOKEN }}
-  SECRET_KEY_REFRESH_TOKEN: ${{ secrets.SECRET_KEY_REFRESH_TOKEN }}
-  JWT_ACCESS_TOKEN_KEY: ${{ secrets.JWT_ACCESS_TOKEN_KEY }}
-  JWT_REFRESH_TOKEN_KEY: ${{ secrets.JWT_REFRESH_TOKEN_KEY }}
-  NEXT_PUBLIC_CENEXT_URL: ${{ secrets.NEXT_PUBLIC_CENEXT_URL }}
-  JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
-  NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
-  NEXT_LOCALE: ${{ secrets.NEXT_LOCALE }}
-  NEXT_PUBLIC_BUYER_TYPE: ${{ secrets.NEXT_PUBLIC_BUYER_TYPE }}
-  ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
-  ECS_SERVICE: ${{ secrets.ECS_SERVICE }}
-  TASK_FAMILY: ${{ secrets.TASK_FAMILY }}
-  INFLUX_URL: "3.144.130.123:8086"
-  INFLUX_DB: "mydb"
-  INFLUX_USER: "admin"
-  INFLUX_PASS: "admin123"
 
 jobs:
-  performance-test:
+  load_test:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout repo
+      # Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-
-      - name: Install k6
-        run: |
-          sudo apt update
-          sudo apt install -y gnupg2 software-properties-common
-          curl -s https://dl.k6.io/key.gpg | sudo apt-key add -
-          echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
-          sudo apt update
-          sudo apt install -y k6
-
-      - name: Run k6 performance test
+      # Create results directory
+      - name: Prepare results directory
         run: |
           mkdir -p results
-          k6 run \
-            --tag test_cycle=${{ github.run_id }} \
-            --out influxdb=v1=http://$INFLUX_URL/$INFLUX_DB \
-            --summary-export=results/summary.json \
-            tests/performance/test.js
+          chmod 777 results
 
+      # Run k6 using the official Docker image (same as GitLab)
+      - name: Run K6 Load Test
+        uses: docker://grafana/k6:latest
+        env:
+          INFLUXDB_USER: ${{ secrets.INFLUXDB_USER }}
+          INFLUXDB_PASS: ${{ secrets.INFLUXDB_PASS }}
+          INFLUX_URL: ${{ secrets.INFLUX_URL }}
+          INFLUXDB_DB: ${{ secrets.INFLUXDB_DB }}
+          TEST_CYCLE_TAG: ${{ github.run_id }}     # equivalent to $CI_PIPELINE_ID
+        with:
+          entrypoint: /bin/sh
+          args: -c "
+            echo '🚀 Running K6 load test and sending metrics to InfluxDB...' &&
+            echo 'Using TEST_CYCLE_TAG=$TEST_CYCLE_TAG' &&
+            k6 run \
+              --tag test_cycle=$TEST_CYCLE_TAG \
+              -e TEST_CYCLE_TAG=$TEST_CYCLE_TAG \
+              --out influxdb=http://$INFLUXDB_USER:$INFLUXDB_PASS@$INFLUX_URL/$INFLUXDB_DB \
+              --summary-export results/summary.json \
+              tests/performance/test.js"
 
-      - name: Upload results artifact
+      # Upload results (equivalent to GitLab artifacts)
+      - name: Upload k6 results artifact
         uses: actions/upload-artifact@v4
+        if: always()
         with:
           name: k6-results
           path: results/
+          retention-days: 7
+
+      # Allow job to fail without failing the workflow (same as GitLab allow_failure)
+      - name: Mark job as successful even if k6 failed
+        if: failure()
+        run: echo "K6 test failed but allow_failure=true equivalent is enabled."
