@@ -32,15 +32,14 @@ env:
   ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
   ECS_SERVICE: ${{ secrets.ECS_SERVICE }}
   TASK_FAMILY: ${{ secrets.TASK_FAMILY }}
+  INFLUX_URL: "3.144.130.123:8086"
+  INFLUX_DB: "mydb"
+  INFLUX_USER: "admin"
+  INFLUX_PASS: "admin123"
 
 jobs:
   performance-test:
     runs-on: ubuntu-latest
-    env:
-      INFLUX_URL: "3.144.130.123:8086"
-      INFLUX_DB: "mydb"
-      INFLUX_USER: "admin"
-      INFLUX_PASS: "admin123"
 
     steps:
       - name: Checkout repo
@@ -65,7 +64,7 @@ jobs:
           mkdir -p results
           k6 run \
             --tag test_cycle=${{ github.run_id }} \
-            --out influxdb=v1=http://${{ env.INFLUXDB_USER }}:${{ env.INFLUXDB_PASS }}@${{ env.INFLUXDB_URL }}/${{ env.INFLUXDB_DB }} \
+            --out influxdb=v1=http://$INFLUX_USER:$INFLUX_PASS@$INFLUX_URL/$INFLUX_DB \
             --summary-export=results/summary.json \
             tests/performance/test.js
 
