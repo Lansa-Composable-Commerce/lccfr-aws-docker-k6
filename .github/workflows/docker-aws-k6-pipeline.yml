@@ -40,15 +40,10 @@ env:
 jobs:
   performance-test:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
 
       - name: Install k6
         run: |
@@ -64,7 +59,7 @@ jobs:
           mkdir -p results
           k6 run \
             --tag test_cycle=${{ github.run_id }} \
-            --out influxdb=v1=http://$INFLUX_USER:$INFLUX_PASS@$INFLUX_URL/$INFLUX_DB \
+            --out influxdb=v1=http://$INFLUX_URL/$INFLUX_DB \
             --summary-export=results/summary.json \
             tests/performance/test.js
 
