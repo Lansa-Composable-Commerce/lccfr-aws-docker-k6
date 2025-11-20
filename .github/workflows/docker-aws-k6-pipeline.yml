@@ -57,7 +57,7 @@ jobs:
         run: |
           k6 run \
           --tag test_cycle=${{ github.run_id }} \
-          --out influxdb=v1=http://$INFLUXDB_USER:$INFLUXDB_PASS@$INFLUXDB_URL/$INFLUXDB_DB \
+          --out influxdb=http://$INFLUXDB_USER:$INFLUXDB_PASS@$INFLUXDB_URL/$INFLUXDB_DB \
           --summary-export=results/summary.json \
           tests/performance/test.js
 
