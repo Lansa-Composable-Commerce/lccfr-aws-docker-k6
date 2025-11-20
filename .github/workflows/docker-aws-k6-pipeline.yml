@@ -1,56 +1,376 @@
-name: Load Test
+name: Build and Deploy
 
 on:
   push:
     branches:
       - main
+    tags:
+      - "*"
+
+permissions:
+  contents: write
+  packages: write
+
+env:
+  IMAGE_NAME: ghcr.io/dylanrmrz/lccfr-aws-docker-k6
+  NODE_ENV: production
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_REGION: us-east-2
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  SECRET_KEY_USER_PAYLOAD: ${{ secrets.SECRET_KEY_USER_PAYLOAD }}
+  SECRET_KEY_ACCESS_TOKEN: ${{ secrets.SECRET_KEY_ACCESS_TOKEN }}
+  SECRET_KEY_REFRESH_TOKEN: ${{ secrets.SECRET_KEY_REFRESH_TOKEN }}
+  JWT_ACCESS_TOKEN_KEY: ${{ secrets.JWT_ACCESS_TOKEN_KEY }}
+  JWT_REFRESH_TOKEN_KEY: ${{ secrets.JWT_REFRESH_TOKEN_KEY }}
+  NEXT_PUBLIC_CENEXT_URL: ${{ secrets.NEXT_PUBLIC_CENEXT_URL }}
+  JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+  NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
+  NEXT_LOCALE: ${{ secrets.NEXT_LOCALE }}
+  NEXT_PUBLIC_BUYER_TYPE: ${{ secrets.NEXT_PUBLIC_BUYER_TYPE }}
+  ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
+  ECS_SERVICE: ${{ secrets.ECS_SERVICE }}
+  TASK_FAMILY: ${{ secrets.TASK_FAMILY }}
 
 jobs:
-  load_test:
+  performance-test:
     runs-on: ubuntu-latest
-
     steps:
-      # Checkout code
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Create results directory
-      - name: Prepare results directory
+      - name: Install k6
         run: |
-          mkdir -p results
-          chmod 777 results
+          sudo apt-get update
+          sudo apt-get install -y gnupg software-properties-common
+          curl -s https://dl.k6.io/key.gpg | sudo apt-key add -
+          echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+          sudo apt-get update
+          sudo apt-get install -y k6
 
-      # Run k6 using the official Docker image (same as GitLab)
-      - name: Run K6 Load Test
-        uses: docker://grafana/k6:latest
-        env:
-          INFLUXDB_USER: ${{ secrets.INFLUXDB_USER }}
-          INFLUXDB_PASS: ${{ secrets.INFLUXDB_PASS }}
-          INFLUX_URL: ${{ secrets.INFLUX_URL }}
-          INFLUXDB_DB: ${{ secrets.INFLUXDB_DB }}
-          TEST_CYCLE_TAG: ${{ github.run_id }}     # equivalent to $CI_PIPELINE_ID
-        with:
-          entrypoint: /bin/sh
-          args: -c "
-            echo '🚀 Running K6 load test and sending metrics to InfluxDB...' &&
-            echo 'Using TEST_CYCLE_TAG=$TEST_CYCLE_TAG' &&
-            k6 run \
-              --tag test_cycle=$TEST_CYCLE_TAG \
-              -e TEST_CYCLE_TAG=$TEST_CYCLE_TAG \
-              --out influxdb=http://$INFLUXDB_USER:$INFLUXDB_PASS@$INFLUX_URL/$INFLUXDB_DB \
-              --summary-export results/summary.json \
-              tests/performance/test.js"
+      - name: Run k6 performance tests
+        run: |
+          k6 run tests/performance/load-test.js
 
-      # Upload results (equivalent to GitLab artifacts)
-      - name: Upload k6 results artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload k6 results as artifact (optional)
         if: always()
+        uses: actions/upload-artifact@v4
         with:
           name: k6-results
-          path: results/
-          retention-days: 7
+          path: k6-results/
 
-      # Allow job to fail without failing the workflow (same as GitLab allow_failure)
-      - name: Mark job as successful even if k6 failed
+      # Optional: Fail workflow if performance thresholds are violated
+      - name: Check thresholds
         if: failure()
-        run: echo "K6 test failed but allow_failure=true equivalent is enabled."
+        run: |
+          echo "❌ Performance thresholds failed. Please check k6 results."
+          exit 1
+  
+
+
+# # Version bump Logic
+# #
+# name: Build and Deploy
+
+# on:
+#   push:
+#     branches:
+#       - main
+#     tags:
+#       - "*"
+
+# permissions:
+#   contents: write
+#   packages: write
+
+# env:
+#   IMAGE_NAME: ghcr.io/dylanrmrz/lccfr-aws-docker-k6
+#   NODE_ENV: production
+#   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#   AWS_REGION: us-east-2
+#   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#   SECRET_KEY_USER_PAYLOAD: ${{ secrets.SECRET_KEY_USER_PAYLOAD }}
+#   SECRET_KEY_ACCESS_TOKEN: ${{ secrets.SECRET_KEY_ACCESS_TOKEN }}
+#   SECRET_KEY_REFRESH_TOKEN: ${{ secrets.SECRET_KEY_REFRESH_TOKEN }}
+#   JWT_ACCESS_TOKEN_KEY: ${{ secrets.JWT_ACCESS_TOKEN_KEY }}
+#   JWT_REFRESH_TOKEN_KEY: ${{ secrets.JWT_REFRESH_TOKEN_KEY }}
+#   NEXT_PUBLIC_CENEXT_URL: ${{ secrets.NEXT_PUBLIC_CENEXT_URL }}
+#   JWT_SECRET_KEY: ${{ secrets.JWT_SECRET_KEY }}
+#   NEXT_PUBLIC_APP_URL: ${{ secrets.NEXT_PUBLIC_APP_URL }}
+#   NEXT_LOCALE: ${{ secrets.NEXT_LOCALE }}
+#   NEXT_PUBLIC_BUYER_TYPE: ${{ secrets.NEXT_PUBLIC_BUYER_TYPE }}
+#   ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
+#   ECS_SERVICE: ${{ secrets.ECS_SERVICE }}
+#   TASK_FAMILY: ${{ secrets.TASK_FAMILY }}
+
+# jobs:
+#   build_and_push:
+#     runs-on: ubuntu-latest
+#     outputs:
+#       full_image: ${{ steps.vars.outputs.full_image }}
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
+#         with:
+#           fetch-depth: 0
+
+#       - name: Logs
+#         run: |
+#           echo "${{ github.actor }}"
+#           echo "${{ secrets.GHCR_PAT }}"
+
+#       - name: Log in to GHCR
+#         uses: docker/login-action@v3
+#         with:
+#           registry: ghcr.io
+#           username: dylanrmrz
+#           password: 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
+
+#       - name: Setup Node.js
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 20
+
+#       - name: Install dependencies
+#         run: |
+#           sudo apt-get update
+#           sudo apt-get install -y jq bash git
+#           npm ci
+
+#       - name: Bump version based on commit message
+#         id: bump
+#         shell: bash
+#         run: |
+#           VERSION_BUMP="patch"
+#           COMMIT_MSG=$(git log -1 --pretty=%B)
+#           # Check for breaking changes first (highest priority)
+#           if echo "$COMMIT_MSG" | grep -qiE "BREAKING CHANGE|!:|major:"; then
+#             VERSION_BUMP="major"
+#           elif echo "$COMMIT_MSG" | grep -qiE "feat|minor:"; then
+#             VERSION_BUMP="minor"
+         
+#           fi
+
+#           CURRENT_VERSION=$(jq -r '.version // "0.0.0"' package.json)
+#           IFS='.' read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+
+#           case "$VERSION_BUMP" in
+#             major)
+#               ((MAJOR+=1))
+#               ;;
+#             minor)
+#               ((MINOR+=1))
+#               ;;
+#             patch|*)
+#               ((PATCH+=1))
+#               ;;
+#           esac
+
+#           NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+
+#           jq --arg v "$NEW_VERSION" '.version = $v' package.json > tmp.json && mv tmp.json package.json
+#           echo "$COMMIT_MSG"
+#           echo "PACKAGE_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+#           echo "Version bumped to $NEW_VERSION"
+
+#       - name: Commit & push version bump
+#         if: github.ref == 'refs/heads/main'
+#         run: |
+#           git config user.name "dylanrmrz"
+#           git config user.email "dylan.ramirez@lansa.com"
+
+#           git add package.json
+#           git commit -m "$COMMIT_MSG" || echo "No version change to commit"
+
+#           if git diff --quiet HEAD package.json; then
+#             echo "⚙️ No version change detected — skipping commit."
+#           else
+#             echo "🌀 Committing version bump..."
+#             git add package.json
+#             git commit -m "ci: bump version to v${PACKAGE_VERSION} [skip ci]" || echo "No version change to commit"
+#             git push origin HEAD:main
+#           fi
+#       - name: Set image tag
+#         id: vars
+#         run: |
+#           TAG="${GITHUB_REF_NAME}"
+#           if [[ "$TAG" == "main" ]]; then
+#             TAG="${PACKAGE_VERSION}"
+#           fi
+
+#           FULL_IMAGE="${IMAGE_NAME}:${TAG}"
+
+#           echo "TAG=$TAG" >> $GITHUB_ENV
+#           echo "✅ Using tag: $TAG"
+
+#           echo "full_image=$FULL_IMAGE" >> $GITHUB_OUTPUT
+#           echo "✅ Full image set to: $FULL_IMAGE"
+
+
+#       - name: Generate build manifest
+#         run: |
+#           git log -n 10 --pretty=format:"%s" | grep -oE '#[0-9]+' | sort -u > issues.txt || true
+#           issues_json=$(jq -R . < issues.txt | jq -s .)
+#           version=$(jq -r '.version' package.json)
+#           now_epoch=$(date +%s)
+#           docker_image="${IMAGE_NAME}:${PACKAGE_VERSION}"
+
+#           cat <<EOF > build-manifest.json
+#           {
+#             "app": "LCCFR",
+#             "version": "$version",
+#             "tag": "$TAG",
+#             "environment": "$NODE_ENV",
+#             "git_commit": "$CI_COMMIT_SHA",
+#             "git_branch": "$CI_COMMIT_REF_NAME",
+#             "git_message": "$(git log -1 --pretty=%s)",
+#             "commit_author": "$(git log -1 --pretty=%an)",
+#             "pipeline_id": "$CI_PIPELINE_ID",
+#             "job_id": "$CI_JOB_ID",
+#             "build_status": "$CI_JOB_STATUS",
+#             "build_duration_sec": $build_duration,
+#             "built_by": "$GITLAB_USER_LOGIN",
+#             "built_at": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+#             "docker_image": "$docker_image",
+#             "linked_issues": $issues_json,
+#             "artifacts": {
+#               "frontend_bundle": "dist/",
+#               "docker_registry": "$CI_REGISTRY_IMAGE"
+#             }
+#           }
+#           EOF
+
+#       - name: Generate release notes
+#         run: |
+#           TAG=${{ github.ref_name }}
+#           USER=${{ github.actor }}
+#           REPO=${{ github.repository }}
+
+#           echo "# Release Notes for $TAG" > release-notes.md
+#           echo "**Environment:** production" >> release-notes.md
+#           echo "**Built by:** $USER" >> release-notes.md
+#           echo "**Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> release-notes.md
+#           echo "" >> release-notes.md
+#           echo "## Recent Commits (last 10)" >> release-notes.md
+#           echo "" >> release-notes.md
+
+#           git log -n 10 --pretty=format:"- [%h](https://github.com/$REPO/commit/%H) %s — *%an*" >> release-notes.md
+#           echo "" >> release-notes.md
+
+#           if [ -s issues.txt ]; then
+#             echo "## Linked Issues" >> release-notes.md
+#             while read issue; do
+#               issue_number="${issue//#/}"
+#               echo "- [${issue}](https://github.com/$REPO/issues/${issue_number})" >> release-notes.md
+#             done < issues.txt
+#           else
+#             echo "_No linked issues found._" >> release-notes.md
+#           fi
+
+#       - name: Build Docker image
+#         run: |
+#           echo "$IMAGE_NAME:$TAG"
+#           docker build \
+#             --build-arg BUILD_MANIFEST=build-manifest.json \
+#             --build-arg RELEASE_NOTES=release-notes.md \
+#             --build-arg SECRET_KEY_USER_PAYLOAD=$SECRET_KEY_USER_PAYLOAD \
+#             --build-arg SECRET_KEY_ACCESS_TOKEN=$SECRET_KEY_ACCESS_TOKEN \
+#             --build-arg SECRET_KEY_REFRESH_TOKEN=$SECRET_KEY_REFRESH_TOKEN \
+#             --build-arg JWT_ACCESS_TOKEN_KEY=$JWT_ACCESS_TOKEN_KEY \
+#             --build-arg JWT_REFRESH_TOKEN_KEY=$JWT_REFRESH_TOKEN_KEY \
+#             --build-arg NEXT_PUBLIC_CENEXT_URL=$NEXT_PUBLIC_CENEXT_URL \
+#             --build-arg NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL \
+#             --build-arg NEXT_LOCALE=$NEXT_LOCALE \
+#             --build-arg NEXT_PUBLIC_BUYER_TYPE=$NEXT_PUBLIC_BUYER_TYPE \
+#             -t "$IMAGE_NAME:$TAG" .
+
+#       - name: Push Docker image
+#         run: docker push "$IMAGE_NAME:$TAG"
+
+#       - name: Upload artifacts
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: build-artifacts
+#           path: |
+#             build-manifest.json
+#             release-notes.md
+
+#   performance-test:
+#     runs-on: ubuntu-latest
+#     needs: build_and_push
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
+
+#       - name: Install k6
+#         run: |
+#           sudo apt-get update
+#           sudo apt-get install -y gnupg software-properties-common
+#           curl -s https://dl.k6.io/key.gpg | sudo apt-key add -
+#           echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
+#           sudo apt-get update
+#           sudo apt-get install -y k6
+
+#       - name: Run k6 performance tests
+#         run: |
+#           k6 run tests/performance/load-test.js
+
+#       - name: Upload k6 results as artifact (optional)
+#         if: always()
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: k6-results
+#           path: k6-results/
+
+#       # Optional: Fail workflow if performance thresholds are violated
+#       - name: Check thresholds
+#         if: failure()
+#         run: |
+#           echo "❌ Performance thresholds failed. Please check k6 results."
+#           exit 1
+#   # deploy:
+#   #   runs-on: ubuntu-latest
+#   #   needs: build_and_push   # 👈 deploy only happens if build_and_push pass
+#   #   steps:
+#   #     - name: Configure AWS credentials
+#   #       uses: aws-actions/configure-aws-credentials@v4
+#   #       with:
+#   #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+#   #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+#   #         aws-region: ${{ env.AWS_REGION }}
+          
+
+#   #     - name: Install jq
+#   #       run: sudo apt-get update && sudo apt-get install -y jq
+
+#   #     - name: Update ECS Task Definition
+#   #       run: |
+#   #         echo "$IMAGE_NAME:$TAG";
+#   #         FULL_IMAGE="${{ needs.build_and_push.outputs.full_image }}"
+#   #         echo "Using image: $FULL_IMAGE"
+
+#   #         aws ecs describe-task-definition --task-definition "$TASK_FAMILY" --query taskDefinition > td.json
+#   #         jq --arg IMAGE "$FULL_IMAGE" '
+#   #           .containerDefinitions[0].image = $IMAGE
+#   #           | {
+#   #               family: .family,
+#   #               networkMode: .networkMode,
+#   #               executionRoleArn: .executionRoleArn,
+#   #               containerDefinitions: .containerDefinitions,
+#   #               requiresCompatibilities: .requiresCompatibilities,
+#   #               cpu: .cpu,
+#   #               memory: .memory
+#   #             }
+#   #           + (if .taskRoleArn != null then {taskRoleArn: .taskRoleArn} else {} end)
+#   #         ' td.json > new-td.json
+#   #         aws ecs register-task-definition --cli-input-json file://new-td.json
+
+#   #     - name: Deploy to ECS
+#   #       run: |
+#   #         aws ecs update-service \
+#   #           --cluster "$ECS_CLUSTER" \
+#   #           --service "$ECS_SERVICE" \
+#   #           --task-definition "$TASK_FAMILY" \
+#   #           --force-new-deployment
+#   #         aws ecs wait services-stable \
+#   #           --cluster "$ECS_CLUSTER" \
+#   #           --services "$ECS_SERVICE"
