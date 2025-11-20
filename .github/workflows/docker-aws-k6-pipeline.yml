@@ -47,15 +47,15 @@ jobs:
 
       - name: Run K6 load test
         run: |
-          docker run --rm \
-            -v "${{ github.workspace }}:/app" \
-            -w /app \
-            grafana/k6:latest \
-            sh -c "mkdir -p results && k6 run \
-                  --tag test_cycle=${{ github.run_id }} \
-                  --out influxdb=http://$INFLUX_USER:$INFLUX_PASS@${INFLUX_URL}/${INFLUX_DB} \
-                  --summary-export=results/summary.json \
-                  tests/performance/load-test.js"
+          mkdir -p results
+          echo "Running k6 load test..."
+
+          docker run --rm -v "${{ github.workspace }}:/app" -w /app grafana/k6:latest \
+            run --tag test_cycle=${{ github.run_id }} \
+                --out influxdb=http://$INFLUX_USER:$INFLUX_PASS@${INFLUX_URL}/${INFLUX_DB} \
+                --summary-export=results/summary.json \
+                tests/performance/load-test.js
+
 
 
       - name: Upload k6 results as artifact (optional)
