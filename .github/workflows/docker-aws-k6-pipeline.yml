@@ -33,7 +33,9 @@ env:
   ECS_SERVICE: ${{ secrets.ECS_SERVICE }}
   TASK_FAMILY: ${{ secrets.TASK_FAMILY }}
   INFLUX_URL: "3.144.130.123:8086"
-  INFLUXDB_DB: "mydb"
+  INFLUX_DB: "mydb"
+  INFLUX_USER: ${{ secrets.INFLUXDB_USER }}
+  INFLUX_PASS: ${{ secrets.INFLUXDB_PASS }}
 
 jobs:
   load_test:
@@ -53,7 +55,7 @@ jobs:
             -w /app \
             grafana/k6:latest \
               run --tag test_cycle=${{ github.run_id }} \
-              --out influxdb=http://${{ secrets.INFLUXDB_USER }}:${{ secrets.INFLUXDB_PASS }}@${INFLUX_URL}/${INFLUXDB_DB} \
+              --out influxdb=http://{$INFLUX_USER}:{$INFLUX_PASS}@${INFLUX_URL}/${INFLUX_DB} \
               --summary-export results/summary.json \
               tests/performance/load-test.js
 
