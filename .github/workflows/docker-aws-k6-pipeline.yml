@@ -55,7 +55,7 @@ jobs:
               run --tag test_cycle=${{ github.run_id }} \
               --out influxdb=http://${{ secrets.INFLUXDB_USER }}:${{ secrets.INFLUXDB_PASS }}@${INFLUX_URL}/${INFLUXDB_DB} \
               --summary-export results/summary.json \
-              tests/performance/test.js
+              tests/performance/load-test.js
 
       - name: Upload results
         uses: actions/upload-artifact@v4
