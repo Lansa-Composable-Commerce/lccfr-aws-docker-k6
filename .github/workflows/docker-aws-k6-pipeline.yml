@@ -44,11 +44,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+
       - name: Run K6 load test
         run: |
           mkdir -p results
-          echo "Running k6 load test..."
-          docker run --rm -i \
+
+          # Run k6 in Docker
+          docker run --rm \
             -v "${{ github.workspace }}:/app" \
             -w /app \
             grafana/k6:latest \
