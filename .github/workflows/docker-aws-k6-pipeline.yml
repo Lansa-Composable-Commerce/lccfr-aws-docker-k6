@@ -55,7 +55,7 @@ jobs:
             -w /app \
             grafana/k6:latest \
               run --tag test_cycle=${{ github.run_id }} \
-              --out influxdb=http://{$INFLUX_USER}:{$INFLUX_PASS}@${INFLUX_URL}/${INFLUX_DB} \
+              --out influxdb=http://$INFLUX_USER:$INFLUX_PASS@${INFLUX_URL}/${INFLUX_DB} \
               --summary-export results/summary.json \
               tests/performance/load-test.js
 
