@@ -245,7 +245,11 @@ jobs:
 
       - name: Run k6 performance tests
         run: |
-          k6 run tests/performance/test.js
+          k6 run \
+          --tag test_cycle=${{ github.run_id }} \
+          --out influxdb=v1=http://$INFLUXDB_USER:$INFLUXDB_PASS@$INFLUXDB_URL/$INFLUXDB_DB \
+          --summary-export=results/summary.json \
+          tests/performance/load-test.js
 
       - name: Upload k6 results as artifact (optional)
         if: always()
