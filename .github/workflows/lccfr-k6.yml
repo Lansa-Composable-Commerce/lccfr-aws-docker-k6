@@ -16,7 +16,16 @@ permissions:
 env:
   IMAGE_NAME: ghcr.io/dylanrmrz/lccfr-aws-docker-k6
   NODE_ENV: production
-
+  AWS_ACCESS_KEY_ID: AKIA2JUYTRHFNYYKK5SK
+  AWS_REGION: us-east-2
+  AWS_SECRET_ACCESS_KEY: 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
+  ECS_CLUSTER: lccfr-k6-influxdb
+  ECS_SERVICE: influxdb-task-svc-v3
+  TASK_FAMILY: influxdb-v1-task
+  INFLUXDB_USER: "admin"
+  INFLUXDB_PASS: "admin123"
+  INFLUXDB_URL: "k6-influxdb-alb-1718751529.us-east-2.elb.amazonaws.com"
+  INFLUXDB_DB: "mydb"
 
 jobs:
   build_and_push:
@@ -40,6 +49,17 @@ jobs:
           registry: ghcr.io
           username: dylanrmrz
           password: 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
+
+      # - name: Setup Node.js
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: 20
+
+      # - name: Install dependencies
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y jq bash git
+      #     npm ci
 
       - name: Bump version in package.json
         run: |
@@ -86,6 +106,42 @@ jobs:
             echo "❌ package.json not found"
             exit 1
           fi
+
+      # - name: Bump version based on commit message
+      #   id: bump
+      #   shell: bash
+      #   run: |
+      #     VERSION_BUMP="patch"
+      #     COMMIT_MSG=$(git log -1 --pretty=%B)
+      #     # Check for breaking changes first (highest priority)
+      #     if echo "$COMMIT_MSG" | grep -qiE "BREAKING CHANGE|!:|major:"; then
+      #       VERSION_BUMP="major"
+      #     elif echo "$COMMIT_MSG" | grep -qiE "feat|minor:"; then
+      #       VERSION_BUMP="minor"
+         
+      #     fi
+
+      #     case "$VERSION_BUMP" in
+      #       major)
+      #         ((MAJOR+=1))
+      #         MINOR=0
+      #         PATCH=0
+      #         ;;
+      #       minor)
+      #         ((MINOR+=1))
+      #         PATCH=0
+      #         ;;
+      #       patch|*)
+      #         ((PATCH+=1))
+      #         ;;
+      #     esac
+
+      #     NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+
+      #     jq --arg v "$NEW_VERSION" '.version = $v' package.json > tmp.json && mv tmp.json package.json
+      #     echo "$COMMIT_MSG"
+      #     echo "PACKAGE_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+      #     echo "Version bumped to $NEW_VERSION"
 
       - name: Commit & push version bump
         if: github.ref == 'refs/heads/main'
@@ -213,11 +269,6 @@ jobs:
   performance-test:
     runs-on: ubuntu-latest
     needs: build_and_push
-    env:
-      INFLUXDB_USER: "admin"
-      INFLUXDB_PASS: "admin123"
-      INFLUXDB_URL: "k6-influxdb-alb-1718751529.us-east-2.elb.amazonaws.com"
-      INFLUXDB_DB: "mydb"
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -257,13 +308,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build_and_push   # 👈 deploy only happens if build_and_push pass
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_REGION: us-east-2
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}  
-      ECS_CLUSTER: ${{ secrets.ECS_CLUSTER }}
-      ECS_SERVICE: ${{ secrets.ECS_SERVICE }}
-      TASK_FAMILY: ${{ secrets.TASK_FAMILY }}
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
