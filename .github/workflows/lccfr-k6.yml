@@ -60,17 +60,17 @@ jobs:
           username: dylanrmrz
           password: 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
 
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
+      # - name: Setup Node.js
+      #   uses: actions/setup-node@v4
+      #   with:
+      #     node-version: 20
 
-      - name: Install dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq bash git
-          npm ci
-          
+      # - name: Install dependencies
+      #   run: |
+      #     sudo apt-get update
+      #     sudo apt-get install -y jq bash git
+      #     npm ci
+
       - name: Bump version in package.json
         run: |
           if [ -f package.json ]; then
