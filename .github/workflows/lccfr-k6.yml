@@ -23,7 +23,7 @@ env:
   TASK_FAMILY: influxdb-v1-task
   INFLUXDB_USER: "admin"
   INFLUXDB_PASS: "admin123"
-  INFLUXDB_URL: "k6-influxdb-alb-1718751529.us-east-2.elb.amazonaws.com"
+  INFLUXDB_URL: "lccfr-influxdb-alb-150162615.us-east-2.elb.amazonaws.com"
   INFLUXDB_DB: "mydb"
 
 jobs:
