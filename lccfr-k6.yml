@@ -271,7 +271,7 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build_and_push   # 👈 deploy only happens if build_and_push pass
+    needs: build_and_push
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
