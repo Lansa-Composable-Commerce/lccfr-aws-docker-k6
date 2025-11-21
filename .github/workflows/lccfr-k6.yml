@@ -70,42 +70,88 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y jq bash git
           npm ci
-
-      - name: Bump version based on commit message
-        id: bump
-        shell: bash
+          
+      - name: Bump version in package.json
         run: |
-          VERSION_BUMP="patch"
-          COMMIT_MSG=$(git log -1 --pretty=%B)
-          # Check for breaking changes first (highest priority)
-          if echo "$COMMIT_MSG" | grep -qiE "BREAKING CHANGE|!:|major:"; then
-            VERSION_BUMP="major"
-          elif echo "$COMMIT_MSG" | grep -qiE "feat|minor:"; then
-            VERSION_BUMP="minor"
-         
-          fi
+          if [ -f package.json ]; then
+            CURRENT_VERSION=$(jq -r ".version" package.json)
+            echo "DEBUG: VERSION_BUMP=<$VERSION_BUMP>"
+            echo "DEBUG: CURRENT_VERSION=<$CURRENT_VERSION>"
 
-          case "$VERSION_BUMP" in
-            major)
+            IFS="." read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+
+            # Ensure numeric values
+            MAJOR=${MAJOR:-0}
+            MINOR=${MINOR:-0}
+            PATCH=${PATCH:-0}
+
+            if [[ "$VERSION_BUMP" == "major" ]]; then
               ((MAJOR+=1))
               MINOR=0
               PATCH=0
-              ;;
-            minor)
+            elif [[ "$VERSION_BUMP" == "minor" ]]; then
               ((MINOR+=1))
               PATCH=0
-              ;;
-            patch|*)
+              echo "reach minor"
+            else
               ((PATCH+=1))
-              ;;
-          esac
+              echo "patch"
+            fi
 
-          NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+            NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+            echo "DEBUG: NEW_VERSION=$NEW_VERSION"
 
-          jq --arg v "$NEW_VERSION" '.version = $v' package.json > tmp.json && mv tmp.json package.json
-          echo "$COMMIT_MSG"
-          echo "PACKAGE_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-          echo "Version bumped to $NEW_VERSION"
+            tmpfile=$(mktemp)
+            jq --arg v "$NEW_VERSION" '.version = $v' package.json > "$tmpfile"
+            mv "$tmpfile" package.json
+
+            # Export for later steps (GitHub Actions)
+            echo "PACKAGE_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+
+            # Also keep build.env file if needed
+            echo "PACKAGE_VERSION=$NEW_VERSION" > build.env
+
+            echo "✅ package.json version updated to $NEW_VERSION"
+          else
+            echo "❌ package.json not found"
+            exit 1
+          fi
+
+      # - name: Bump version based on commit message
+      #   id: bump
+      #   shell: bash
+      #   run: |
+      #     VERSION_BUMP="patch"
+      #     COMMIT_MSG=$(git log -1 --pretty=%B)
+      #     # Check for breaking changes first (highest priority)
+      #     if echo "$COMMIT_MSG" | grep -qiE "BREAKING CHANGE|!:|major:"; then
+      #       VERSION_BUMP="major"
+      #     elif echo "$COMMIT_MSG" | grep -qiE "feat|minor:"; then
+      #       VERSION_BUMP="minor"
+         
+      #     fi
+
+      #     case "$VERSION_BUMP" in
+      #       major)
+      #         ((MAJOR+=1))
+      #         MINOR=0
+      #         PATCH=0
+      #         ;;
+      #       minor)
+      #         ((MINOR+=1))
+      #         PATCH=0
+      #         ;;
+      #       patch|*)
+      #         ((PATCH+=1))
+      #         ;;
+      #     esac
+
+      #     NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+
+      #     jq --arg v "$NEW_VERSION" '.version = $v' package.json > tmp.json && mv tmp.json package.json
+      #     echo "$COMMIT_MSG"
+      #     echo "PACKAGE_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+      #     echo "Version bumped to $NEW_VERSION"
 
       - name: Commit & push version bump
         if: github.ref == 'refs/heads/main'
