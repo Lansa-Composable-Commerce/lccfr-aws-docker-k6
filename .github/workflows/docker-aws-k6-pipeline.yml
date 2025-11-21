@@ -34,7 +34,7 @@ env:
   TASK_FAMILY: ${{ secrets.TASK_FAMILY }}
   INFLUXDB_USER: "admin"
   INFLUXDB_PASS: "admin123"
-  INFLUXDB_URL: "3.144.130.123:8086"
+  INFLUXDB_URL: "18.218.182.112:8086"
   INFLUXDB_DB: "mydb"
 
 jobs:
