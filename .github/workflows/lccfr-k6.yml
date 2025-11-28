@@ -304,6 +304,7 @@ jobs:
   #         aws ecs wait services-stable \
   #           --cluster "$ECS_CLUSTER" \
   #           --services "$ECS_SERVICE"
+  # Email Notification Automation
   notify:
     needs: [performance-test]
     runs-on: ubuntu-latest
