@@ -320,7 +320,7 @@ jobs:
           subject: |
             GitHub CI Pipeline Result: ${{ needs.performance-test.result }}
           from: "dylan.ramirez@lansa.com"
-          to: "cenext.lansa@gmail.com"
+          to: "cenext.lansa@gmail.com, patrick.fleming@lansa.com, david.valdez@lansa.com"
           body: |
             CI/CD Notification
             ----------------------------
