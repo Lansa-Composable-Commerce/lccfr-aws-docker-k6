@@ -315,12 +315,12 @@ jobs:
         with:
           server_address: "smtp.gmail.com"
           server_port: 587
-          username: "cenext.lansa@gmail.com"
+          username: "dylan.ramirez@lansa.com"
           password: "brtt cicb ylhr pqiz"
           subject: |
             GitHub CI Pipeline Result: ${{ needs.performance-test.result }}
-          from: "cenext.lansa@gmail.com"
-          to: "dylan.ramirez@lansa.com"
+          from: "dylan.ramirez@lansa.com"
+          to: "cenext.lansa@gmail.com"
           body: |
             CI/CD Notification
             ----------------------------
