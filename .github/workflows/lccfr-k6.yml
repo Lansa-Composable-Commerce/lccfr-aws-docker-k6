@@ -316,7 +316,7 @@ jobs:
           server_address: "smtp.gmail.com"
           server_port: 587
           username: "cenext.lansa@gmail.com"
-          password: "Lansa2025@"
+          password: "brtt cicb ylhr pqiz"
           subject: |
             GitHub CI Pipeline Result: ${{ needs.performance-test.result }}
           from: "cenext.lansa@gmail.com"
