@@ -339,18 +339,18 @@ jobs:
 
 
       - name: Notify Failure Email
-        if: failure()          # runs only if something failed
+        if: failure() 
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 587
-          username: ${{ secrets.EMAIL_USERNAME }}
-          password: ${{ secrets.EMAIL_PASSWORD }}
+          username: "dylan.ramirez@lansa.com"
+          password: "brtt cicb ylhr pqiz"
           subject: "❌ CI Pipeline FAILED"
           to: |
-            sre@example.com,
-            devops@example.com
-          from: "Pipeline Bot <devops@example.com>"
+            dylan.ramirez@lansa.com,
+            patrick.fleming@lansa.com
+          from: "Pipeline Bot <devops@lansa.com>"
           body: "The GitHub Actions CI pipeline has FAILED. Please investigate."
 
   
