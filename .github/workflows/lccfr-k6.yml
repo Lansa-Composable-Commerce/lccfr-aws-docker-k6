@@ -261,7 +261,7 @@ jobs:
           server_address: smtp.gmail.com
           server_port: 587
           username: dylan.ramirez@lansa.com
-          password: ${{ secrets.MAIL_PASSWORD }}
+          password: "brtt cicb ylhr pqiz"
           from: dylan.ramirez@lansa.com
           to: cenext.lansa@gmail.com, patrick.fleming@lansa.com, david.valdez@lansa.com
           subject: "GitHub CI Pipeline Success"
@@ -281,7 +281,7 @@ jobs:
           server_address: smtp.gmail.com
           server_port: 587
           username: dylan.ramirez@lansa.com
-          password: ${{ secrets.MAIL_PASSWORD }}
+          password: "brtt cicb ylhr pqiz"
           from: "Pipeline Bot <devops@lansa.com>"
           to: dylan.ramirez@lansa.com, patrick.fleming@lansa.com
           subject: "❌ CI Pipeline FAILED"
