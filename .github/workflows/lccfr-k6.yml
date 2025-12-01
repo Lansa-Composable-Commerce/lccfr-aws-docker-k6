@@ -248,9 +248,6 @@ jobs:
           name: k6-results
           path: k6-results/
 
-      # # Artificial fail for testing
-      # - name: Force failure for testing
-      #   run: exit 1
 
       # ----------------------------------------------------
       # SUCCESS NOTIFICATION
