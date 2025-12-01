@@ -256,6 +256,9 @@ jobs:
           echo "❌ Performance thresholds failed. Please check k6 results."
           exit 1
 
+      - name: Force failure for testing
+        run: exit 1
+
 
   # deploy:
   #   runs-on: ubuntu-latest
