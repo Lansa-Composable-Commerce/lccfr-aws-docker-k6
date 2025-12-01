@@ -299,6 +299,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs:  performance-test # 👈 deploy only happens if build_and_push pass
+    env:  
+      FULL_IMAGE: ${{ needs.build_and_push.outputs.full_image }}
     steps:
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -313,8 +315,8 @@ jobs:
 
       - name: Update ECS Task Definition
         run: |
+        
           echo "$IMAGE_NAME:$TAG";
-          FULL_IMAGE: ${{ needs.build_and_push.outputs.full_image }}
           echo "Using image: $FULL_IMAGE"
 
           aws ecs describe-task-definition --task-definition "$TASK_FAMILY" --query taskDefinition > td.json
