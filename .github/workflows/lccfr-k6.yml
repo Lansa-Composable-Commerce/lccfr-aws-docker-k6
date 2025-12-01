@@ -27,195 +27,196 @@ env:
   INFLUXDB_DB: "mydb"
 
 jobs:
-  # build_and_push:
-  #   runs-on: ubuntu-latest
-  #   outputs:
-  #     full_image: ${{ steps.vars.outputs.full_image }}
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v4
-  #       with:
-  #         fetch-depth: 0
+  build_and_push:
+    runs-on: ubuntu-latest
+    outputs:
+      full_image: ${{ steps.vars.outputs.full_image }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-  #     - name: Logs
-  #       run: |
-  #         echo "${{ github.actor }}"
-  #         echo "${{ secrets.GHCR_PAT }}"
+      - name: Logs
+        run: |
+          echo "${{ github.actor }}"
+          echo "${{ secrets.GHCR_PAT }}"
 
-  #     - name: Log in to GHCR
-  #       uses: docker/login-action@v3
-  #       with:
-  #         registry: ghcr.io
-  #         username: dylanrmrz
-  #         password: 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
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: dylanrmrz
+          password: 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
 
-  #     - name: Bump version in package.json
-  #       run: |
-  #         if [ -f package.json ]; then
-  #           CURRENT_VERSION=$(jq -r ".version" package.json)
-  #           echo "DEBUG: VERSION_BUMP=<$VERSION_BUMP>"
-  #           echo "DEBUG: CURRENT_VERSION=<$CURRENT_VERSION>"
+      - name: Bump version in package.json
+        run: |
+          if [ -f package.json ]; then
+            CURRENT_VERSION=$(jq -r ".version" package.json)
+            echo "DEBUG: VERSION_BUMP=<$VERSION_BUMP>"
+            echo "DEBUG: CURRENT_VERSION=<$CURRENT_VERSION>"
 
-  #           IFS="." read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
+            IFS="." read -r MAJOR MINOR PATCH <<< "$CURRENT_VERSION"
 
-  #           # Ensure numeric values
-  #           MAJOR=${MAJOR:-0}
-  #           MINOR=${MINOR:-0}
-  #           PATCH=${PATCH:-0}
+            # Ensure numeric values
+            MAJOR=${MAJOR:-0}
+            MINOR=${MINOR:-0}
+            PATCH=${PATCH:-0}
 
-  #           if [[ "$VERSION_BUMP" == "major" ]]; then
-  #             ((MAJOR+=1))
-  #             MINOR=0
-  #             PATCH=0
-  #           elif [[ "$VERSION_BUMP" == "minor" ]]; then
-  #             ((MINOR+=1))
-  #             PATCH=0
-  #             echo "reach minor"
-  #           else
-  #             ((PATCH+=1))
-  #             echo "patch"
-  #           fi
+            if [[ "$VERSION_BUMP" == "major" ]]; then
+              ((MAJOR+=1))
+              MINOR=0
+              PATCH=0
+            elif [[ "$VERSION_BUMP" == "minor" ]]; then
+              ((MINOR+=1))
+              PATCH=0
+              echo "reach minor"
+            else
+              ((PATCH+=1))
+              echo "patch"
+            fi
 
-  #           NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
-  #           echo "DEBUG: NEW_VERSION=$NEW_VERSION"
+            NEW_VERSION="${MAJOR}.${MINOR}.${PATCH}"
+            echo "DEBUG: NEW_VERSION=$NEW_VERSION"
 
-  #           tmpfile=$(mktemp)
-  #           jq --arg v "$NEW_VERSION" '.version = $v' package.json > "$tmpfile"
-  #           mv "$tmpfile" package.json
+            tmpfile=$(mktemp)
+            jq --arg v "$NEW_VERSION" '.version = $v' package.json > "$tmpfile"
+            mv "$tmpfile" package.json
 
-  #           # Export for later steps (GitHub Actions)
-  #           echo "PACKAGE_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+            # Export for later steps (GitHub Actions)
+            echo "PACKAGE_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
-  #           # Also keep build.env file if needed
-  #           echo "PACKAGE_VERSION=$NEW_VERSION" > build.env
+            # Also keep build.env file if needed
+            echo "PACKAGE_VERSION=$NEW_VERSION" > build.env
 
-  #           echo "✅ package.json version updated to $NEW_VERSION"
-  #         else
-  #           echo "❌ package.json not found"
-  #           exit 1
-  #         fi
+            echo "✅ package.json version updated to $NEW_VERSION"
+          else
+            echo "❌ package.json not found"
+            exit 1
+          fi
 
-  #     - name: Commit & push version bump
-  #       if: github.ref == 'refs/heads/main'
-  #       run: |
-  #         git config user.name "dylanrmrz"
-  #         git config user.email "dylan.ramirez@lansa.com"
+      - name: Commit & push version bump
+        if: github.ref == 'refs/heads/main'
+        run: |
+          git config user.name "dylanrmrz"
+          git config user.email "dylan.ramirez@lansa.com"
 
-  #         git add package.json
-  #         git commit -m "$COMMIT_MSG" || echo "No version change to commit"
+          git add package.json
+          git commit -m "$COMMIT_MSG" || echo "No version change to commit"
 
-  #         if git diff --quiet HEAD package.json; then
-  #           echo "⚙️ No version change detected — skipping commit."
-  #         else
-  #           echo "🌀 Committing version bump..."
-  #           git add package.json
-  #           git commit -m "ci: bump version to v${PACKAGE_VERSION} [skip ci]" || echo "No version change to commit"
-  #           git push origin HEAD:main
-  #         fi
-  #     - name: Set image tag
-  #       id: vars
-  #       run: |
-  #         TAG="${GITHUB_REF_NAME}"
-  #         if [[ "$TAG" == "main" ]]; then
-  #           TAG="${PACKAGE_VERSION}"
-  #         fi
+          if git diff --quiet HEAD package.json; then
+            echo "⚙️ No version change detected — skipping commit."
+          else
+            echo "🌀 Committing version bump..."
+            git add package.json
+            git commit -m "ci: bump version to v${PACKAGE_VERSION} [skip ci]" || echo "No version change to commit"
+            git push origin HEAD:main
+          fi
+      - name: Set image tag
+        id: vars
+        run: |
+          TAG="${GITHUB_REF_NAME}"
+          if [[ "$TAG" == "main" ]]; then
+            TAG="${PACKAGE_VERSION}"
+          fi
 
-  #         FULL_IMAGE="${IMAGE_NAME}:${TAG}"
+          FULL_IMAGE="${IMAGE_NAME}:${TAG}"
 
-  #         echo "TAG=$TAG" >> $GITHUB_ENV
-  #         echo "✅ Using tag: $TAG"
+          echo "TAG=$TAG" >> $GITHUB_ENV
+          echo "✅ Using tag: $TAG"
 
-  #         echo "full_image=$FULL_IMAGE" >> $GITHUB_OUTPUT
-  #         echo "✅ Full image set to: $FULL_IMAGE"
+          echo "full_image=$FULL_IMAGE" >> $GITHUB_OUTPUT
+          echo "✅ Full image set to: $FULL_IMAGE"
 
 
-  #     - name: Generate build manifest
-  #       run: |
-  #         git log -n 10 --pretty=format:"%s" | grep -oE '#[0-9]+' | sort -u > issues.txt || true
-  #         issues_json=$(jq -R . < issues.txt | jq -s .)
-  #         version=$(jq -r '.version' package.json)
-  #         now_epoch=$(date +%s)
-  #         docker_image="${IMAGE_NAME}:${PACKAGE_VERSION}"
+      - name: Generate build manifest
+        run: |
+          git log -n 10 --pretty=format:"%s" | grep -oE '#[0-9]+' | sort -u > issues.txt || true
+          issues_json=$(jq -R . < issues.txt | jq -s .)
+          version=$(jq -r '.version' package.json)
+          now_epoch=$(date +%s)
+          docker_image="${IMAGE_NAME}:${PACKAGE_VERSION}"
 
-  #         cat <<EOF > build-manifest.json
-  #         {
-  #           "app": "LCCFR",
-  #           "version": "$version",
-  #           "tag": "$TAG",
-  #           "environment": "$NODE_ENV",
-  #           "git_commit": "$CI_COMMIT_SHA",
-  #           "git_branch": "$CI_COMMIT_REF_NAME",
-  #           "git_message": "$(git log -1 --pretty=%s)",
-  #           "commit_author": "$(git log -1 --pretty=%an)",
-  #           "pipeline_id": "$CI_PIPELINE_ID",
-  #           "job_id": "$CI_JOB_ID",
-  #           "build_status": "$CI_JOB_STATUS",
-  #           "build_duration_sec": $build_duration,
-  #           "built_by": "$GITLAB_USER_LOGIN",
-  #           "built_at": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
-  #           "docker_image": "$docker_image",
-  #           "linked_issues": $issues_json,
-  #           "artifacts": {
-  #             "frontend_bundle": "dist/",
-  #             "docker_registry": "$CI_REGISTRY_IMAGE"
-  #           }
-  #         }
-  #         EOF
+          cat <<EOF > build-manifest.json
+          {
+            "app": "LCCFR",
+            "version": "$version",
+            "tag": "$TAG",
+            "environment": "$NODE_ENV",
+            "git_commit": "$CI_COMMIT_SHA",
+            "git_branch": "$CI_COMMIT_REF_NAME",
+            "git_message": "$(git log -1 --pretty=%s)",
+            "commit_author": "$(git log -1 --pretty=%an)",
+            "pipeline_id": "$CI_PIPELINE_ID",
+            "job_id": "$CI_JOB_ID",
+            "build_status": "$CI_JOB_STATUS",
+            "build_duration_sec": $build_duration,
+            "built_by": "$GITLAB_USER_LOGIN",
+            "built_at": "$(date -u +"%Y-%m-%dT%H:%M:%SZ")",
+            "docker_image": "$docker_image",
+            "linked_issues": $issues_json,
+            "artifacts": {
+              "frontend_bundle": "dist/",
+              "docker_registry": "$CI_REGISTRY_IMAGE"
+            }
+          }
+          EOF
 
-  #     - name: Generate release notes
-  #       run: |
-  #         TAG=${{ github.ref_name }}
-  #         USER=${{ github.actor }}
-  #         REPO=${{ github.repository }}
+      - name: Generate release notes
+        run: |
+          TAG=${{ github.ref_name }}
+          USER=${{ github.actor }}
+          REPO=${{ github.repository }}
 
-  #         echo "# Release Notes for $TAG" > release-notes.md
-  #         echo "**Environment:** production" >> release-notes.md
-  #         echo "**Built by:** $USER" >> release-notes.md
-  #         echo "**Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> release-notes.md
-  #         echo "" >> release-notes.md
-  #         echo "## Recent Commits (last 10)" >> release-notes.md
-  #         echo "" >> release-notes.md
+          echo "# Release Notes for $TAG" > release-notes.md
+          echo "**Environment:** production" >> release-notes.md
+          echo "**Built by:** $USER" >> release-notes.md
+          echo "**Date:** $(date -u +"%Y-%m-%d %H:%M:%S UTC")" >> release-notes.md
+          echo "" >> release-notes.md
+          echo "## Recent Commits (last 10)" >> release-notes.md
+          echo "" >> release-notes.md
 
-  #         git log -n 10 --pretty=format:"- [%h](https://github.com/$REPO/commit/%H) %s — *%an*" >> release-notes.md
-  #         echo "" >> release-notes.md
+          git log -n 10 --pretty=format:"- [%h](https://github.com/$REPO/commit/%H) %s — *%an*" >> release-notes.md
+          echo "" >> release-notes.md
 
-  #         if [ -s issues.txt ]; then
-  #           echo "## Linked Issues" >> release-notes.md
-  #           while read issue; do
-  #             issue_number="${issue//#/}"
-  #             echo "- [${issue}](https://github.com/$REPO/issues/${issue_number})" >> release-notes.md
-  #           done < issues.txt
-  #         else
-  #           echo "_No linked issues found._" >> release-notes.md
-  #         fi
+          if [ -s issues.txt ]; then
+            echo "## Linked Issues" >> release-notes.md
+            while read issue; do
+              issue_number="${issue//#/}"
+              echo "- [${issue}](https://github.com/$REPO/issues/${issue_number})" >> release-notes.md
+            done < issues.txt
+          else
+            echo "_No linked issues found._" >> release-notes.md
+          fi
 
-  #     - name: Build Docker image
-  #       run: |
-  #         echo "$IMAGE_NAME:$TAG"
-  #         docker build \
-  #           --build-arg BUILD_MANIFEST=build-manifest.json \
-  #           --build-arg RELEASE_NOTES=release-notes.md \
-  #           --build-arg SECRET_KEY_USER_PAYLOAD=$SECRET_KEY_USER_PAYLOAD \
-  #           --build-arg SECRET_KEY_ACCESS_TOKEN=$SECRET_KEY_ACCESS_TOKEN \
-  #           --build-arg SECRET_KEY_REFRESH_TOKEN=$SECRET_KEY_REFRESH_TOKEN \
-  #           --build-arg JWT_ACCESS_TOKEN_KEY=$JWT_ACCESS_TOKEN_KEY \
-  #           --build-arg JWT_REFRESH_TOKEN_KEY=$JWT_REFRESH_TOKEN_KEY \
-  #           --build-arg NEXT_PUBLIC_CENEXT_URL=$NEXT_PUBLIC_CENEXT_URL \
-  #           --build-arg NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL \
-  #           --build-arg NEXT_LOCALE=$NEXT_LOCALE \
-  #           --build-arg NEXT_PUBLIC_BUYER_TYPE=$NEXT_PUBLIC_BUYER_TYPE \
-  #           -t "$IMAGE_NAME:$TAG" .
+      - name: Build Docker image
+        run: |
+          echo "$IMAGE_NAME:$TAG"
+          docker build \
+            --build-arg BUILD_MANIFEST=build-manifest.json \
+            --build-arg RELEASE_NOTES=release-notes.md \
+            --build-arg SECRET_KEY_USER_PAYLOAD=$SECRET_KEY_USER_PAYLOAD \
+            --build-arg SECRET_KEY_ACCESS_TOKEN=$SECRET_KEY_ACCESS_TOKEN \
+            --build-arg SECRET_KEY_REFRESH_TOKEN=$SECRET_KEY_REFRESH_TOKEN \
+            --build-arg JWT_ACCESS_TOKEN_KEY=$JWT_ACCESS_TOKEN_KEY \
+            --build-arg JWT_REFRESH_TOKEN_KEY=$JWT_REFRESH_TOKEN_KEY \
+            --build-arg NEXT_PUBLIC_CENEXT_URL=$NEXT_PUBLIC_CENEXT_URL \
+            --build-arg NEXT_PUBLIC_APP_URL=$NEXT_PUBLIC_APP_URL \
+            --build-arg NEXT_LOCALE=$NEXT_LOCALE \
+            --build-arg NEXT_PUBLIC_BUYER_TYPE=$NEXT_PUBLIC_BUYER_TYPE \
+            -t "$IMAGE_NAME:$TAG" .
 
-  #     - name: Push Docker image
-  #       run: docker push "$IMAGE_NAME:$TAG"
+      - name: Push Docker image
+        run: docker push "$IMAGE_NAME:$TAG"
 
-  #     - name: Upload artifacts
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: build-artifacts
-  #         path: |
-  #           build-manifest.json
-  #           release-notes.md
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-artifacts
+          path: |
+            build-manifest.json
+            release-notes.md
+
   performance-test:
     runs-on: ubuntu-latest
 
@@ -247,9 +248,9 @@ jobs:
           name: k6-results
           path: k6-results/
 
-      # Artificial fail for testing
-      - name: Force failure for testing
-        run: exit 1
+      # # Artificial fail for testing
+      # - name: Force failure for testing
+      #   run: exit 1
 
       # ----------------------------------------------------
       # SUCCESS NOTIFICATION
@@ -293,137 +294,51 @@ jobs:
             Run ID: ${{ github.run_id }}
             URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
-
-  # performance-test:
-  #   runs-on: ubuntu-latest
-  #   # needs: build_and_push
-  #   steps:
-  #     - name: Checkout repository
-  #       uses: actions/checkout@v4
-
-  #     - name: Install k6
-  #       run: |
-  #         sudo apt-get update
-  #         sudo apt-get install -y gnupg software-properties-common
-  #         curl -s https://dl.k6.io/key.gpg | sudo apt-key add -
-  #         echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
-  #         sudo apt-get update
-  #         sudo apt-get install -y k6
-
-  #     - name: Run k6 performance tests
-  #       run: |
-  #         k6 run \
-  #         --tag test_cycle=${{ github.run_id }} \
-  #         --out influxdb=http://$INFLUXDB_USER:$INFLUXDB_PASS@$INFLUXDB_URL/$INFLUXDB_DB \
-  #         --summary-export=results/summary.json \
-  #         tests/performance/test.js
-
-  #     - name: Upload k6 results as artifact (optional)
-  #       if: always()
-  #       uses: actions/upload-artifact@v4
-  #       with:
-  #         name: k6-results
-  #         path: k6-results/
-
-  #     # Optional: Fail workflow if performance thresholds are violated
-  #     - name: Check thresholds
-  #       if: failure()
-  #       run: |
-  #         echo "❌ Performance thresholds failed. Please check k6 results."
-  #         exit 1
-
-  #     - name: Force failure for testing
-  #       run: exit 1
-
-  #     - name: Send Email Notification
-  #       if: success() 
-  #       uses: dawidd6/action-send-mail@v3
-  #       with:
-  #         server_address: "smtp.gmail.com"
-  #         server_port: 587
-  #         username: "dylan.ramirez@lansa.com"
-  #         password: "brtt cicb ylhr pqiz"
-  #         subject: "GitHub CI Pipeline Success" 
-  #         from: "dylan.ramirez@lansa.com"
-  #         to: "cenext.lansa@gmail.com, patrick.fleming@lansa.com, david.valdez@lansa.com"
-  #         body: |
-  #           CI/CD Notification
-  #           ----------------------------
-  #           Repository: ${{ github.repository }}
-  #           Branch: ${{ github.ref_name }}
-  #           Commit: ${{ github.sha }}
-  #           Run ID: ${{ github.run_id }}
-  #           Actor: ${{ github.actor }}
-  #           Workflow: ${{ github.workflow }}
-
-  #           Performance Test Result: Success
-
-  #           Run URL:
-  #           https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-  #           This email was auto-generated by GitHub Actions.
-
-  #     - name: Notify Failure Email
-  #       if: failure() 
-  #       uses: dawidd6/action-send-mail@v3
-  #       with:
-  #         server_address: smtp.gmail.com
-  #         server_port: 587
-  #         username: "dylan.ramirez@lansa.com"
-  #         password: "brtt cicb ylhr pqiz"
-  #         subject: "❌ CI Pipeline FAILED"
-  #         to: |
-  #           dylan.ramirez@lansa.com,
-  #           patrick.fleming@lansa.com
-  #           from: "Pipeline Bot <devops@lansa.com>"
-  #           body: "The GitHub Actions CI pipeline has FAILED. Please investigate."
-
-
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   needs: build_and_push   # 👈 deploy only happens if build_and_push pass
-  #   steps:
-  #     - name: Configure AWS credentials
-  #       uses: aws-actions/configure-aws-credentials@v4
-  #       with:
-  #         aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-  #         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  #         aws-region: ${{ env.AWS_REGION }}
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build_and_push   # 👈 deploy only happens if build_and_push pass
+    steps:
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
           
 
-  #     - name: Install jq
-  #       run: sudo apt-get update && sudo apt-get install -y jq
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
 
-  #     - name: Update ECS Task Definition
-  #       run: |
-  #         echo "$IMAGE_NAME:$TAG";
-  #         FULL_IMAGE="${{ needs.build_and_push.outputs.full_image }}"
-  #         echo "Using image: $FULL_IMAGE"
+      - name: Update ECS Task Definition
+        run: |
+          echo "$IMAGE_NAME:$TAG";
+          FULL_IMAGE="${{ needs.build_and_push.outputs.full_image }}"
+          echo "Using image: $FULL_IMAGE"
 
-  #         aws ecs describe-task-definition --task-definition "$TASK_FAMILY" --query taskDefinition > td.json
-  #         jq --arg IMAGE "$FULL_IMAGE" '
-  #           .containerDefinitions[0].image = $IMAGE
-  #           | {
-  #               family: .family,
-  #               networkMode: .networkMode,
-  #               executionRoleArn: .executionRoleArn,
-  #               containerDefinitions: .containerDefinitions,
-  #               requiresCompatibilities: .requiresCompatibilities,
-  #               cpu: .cpu,
-  #               memory: .memory
-  #             }
-  #           + (if .taskRoleArn != null then {taskRoleArn: .taskRoleArn} else {} end)
-  #         ' td.json > new-td.json
-  #         aws ecs register-task-definition --cli-input-json file://new-td.json
+          aws ecs describe-task-definition --task-definition "$TASK_FAMILY" --query taskDefinition > td.json
+          jq --arg IMAGE "$FULL_IMAGE" '
+            .containerDefinitions[0].image = $IMAGE
+            | {
+                family: .family,
+                networkMode: .networkMode,
+                executionRoleArn: .executionRoleArn,
+                containerDefinitions: .containerDefinitions,
+                requiresCompatibilities: .requiresCompatibilities,
+                cpu: .cpu,
+                memory: .memory
+              }
+            + (if .taskRoleArn != null then {taskRoleArn: .taskRoleArn} else {} end)
+          ' td.json > new-td.json
+          aws ecs register-task-definition --cli-input-json file://new-td.json
 
-  #     - name: Deploy to ECS
-  #       run: |
-  #         aws ecs update-service \
-  #           --cluster "$ECS_CLUSTER" \
-  #           --service "$ECS_SERVICE" \
-  #           --task-definition "$TASK_FAMILY" \
-  #           --force-new-deployment
-  #         aws ecs wait services-stable \
-  #           --cluster "$ECS_CLUSTER" \
-  #           --services "$ECS_SERVICE"
+      - name: Deploy to ECS
+        run: |
+          aws ecs update-service \
+            --cluster "$ECS_CLUSTER" \
+            --service "$ECS_SERVICE" \
+            --task-definition "$TASK_FAMILY" \
+            --force-new-deployment
+          aws ecs wait services-stable \
+            --cluster "$ECS_CLUSTER" \
+            --services "$ECS_SERVICE"
   
