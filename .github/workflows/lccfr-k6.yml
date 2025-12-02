@@ -13,18 +13,21 @@ permissions:
   packages: write
 
 env:
-  IMAGE_NAME: ghcr.io/dylanrmrz/lccfr-aws-docker-k6
-  NODE_ENV: production
+  # Variables
+  IMAGE_NAME: ${{ vars.IMAGE_NAME }}
+  NODE_ENV: ${{ vars.NODE_ENV }} 
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
+  ECS_SERVICE: ${{ vars.ECS_SERVICE }}
+  TASK_FAMILY: ${{ vars.TASK_FAMILY }}
+  INFLUXDB_USER: ${{ vars.INFLUXDB_USER }}
+  INFLUXDB_URL: ${{ vars.INFLUXDB_URL }}
+  INFLUXDB_DB: ${{ vars.INFLUXDB_DB }}
+
+  # Secrets
   AWS_ACCESS_KEY_ID: AKIA2JUYTRHFNYYKK5SK
-  AWS_REGION: us-east-2
   AWS_SECRET_ACCESS_KEY: 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
-  ECS_CLUSTER: LCCFR
-  ECS_SERVICE: lccfr-task-v2-svc
-  TASK_FAMILY: lccfr-task-v2
-  INFLUXDB_USER: "admin"
   INFLUXDB_PASS: "admin123"
-  INFLUXDB_URL: "lccfr-influxdb-alb-150162615.us-east-2.elb.amazonaws.com"
-  INFLUXDB_DB: "mydb"
 
 jobs:
   build_and_push:
