@@ -332,7 +332,8 @@ jobs:
                 containerDefinitions: .containerDefinitions,
                 requiresCompatibilities: .requiresCompatibilities,
                 cpu: .cpu,
-                memory: .memory
+                memory: .memory,
+                volumes: .volumes
               }
             + (if .taskRoleArn != null then {taskRoleArn: .taskRoleArn} else {} end)
           ' td.json > new-td.json
