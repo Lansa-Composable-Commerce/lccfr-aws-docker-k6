@@ -48,9 +48,9 @@ jobs:
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
-          registry: ghcr.io
-          username: dylanrmrz
-          password: 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
+          registry: ${{ vars.GHCR }}
+          username: ${{ vars.GH_USER }}
+          password: ${{ secrets.GH_PASS }}
 
       - name: Bump version in package.json
         run: |
@@ -272,7 +272,7 @@ jobs:
           username: dylan.ramirez@lansa.com
           password: "brtt cicb ylhr pqiz"
           from: dylan.ramirez@lansa.com
-          to: cenext.lansa@gmail.com, patrick.fleming@lansa.com, david.valdez@lansa.com
+          to: cenext.lansa@gmail.com
           subject: "GitHub CI Pipeline Success"
           body: |
             CI/CD Notification
@@ -292,7 +292,7 @@ jobs:
           username: dylan.ramirez@lansa.com
           password: "brtt cicb ylhr pqiz"
           from: "Pipeline Bot <devops@lansa.com>"
-          to: dylan.ramirez@lansa.com, patrick.fleming@lansa.com
+          to: dylan.ramirez@lansa.com
           subject: "❌ CI Pipeline FAILED"
           body: |
             The GitHub Actions CI pipeline has FAILED.
@@ -305,6 +305,8 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs:  performance-test # 👈 deploy only happens if build_and_push pass
+    environment:
+      name: production
     env:  
       FULL_IMAGE: ${{ needs.performance-test.outputs.docker_image }}
     steps:
