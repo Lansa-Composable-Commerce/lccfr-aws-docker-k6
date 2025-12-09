@@ -216,6 +216,7 @@ jobs:
 
   tests:
     needs: build
+    runs-on: ubuntu-latest
     env:
       IMAGE_NAME:  ${{ needs.build_and_push.outputs.full_image }} 
     outputs:
