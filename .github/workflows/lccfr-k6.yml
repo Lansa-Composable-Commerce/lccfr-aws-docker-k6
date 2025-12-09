@@ -237,16 +237,18 @@ jobs:
   notify_predeploy:
     needs: tests
     runs-on: ubuntu-latest
+
     steps:
       - name: Send Pre-Deployment Email
-        uses: dawidd6/action-send-mail@v3
+        if: always()
+        uses: dawidd6/action-send-mail@v3e
         with:
           server_address: smtp.gmail.com
           server_port: 587
           username: dylan.ramirez@lansa.com
           password: "brtt cicb ylhr pqiz"
           to: "dylan.ramirez@lansa.com,patrick.fleming@lansa.com"
-          subject: "Approval Required for Deployment of ${{ env.APP_NAME }}"
+          subject: "Approval Required for Deployment of $docker_image"
           body: |
             Deployment is pending approval.
 
@@ -325,24 +327,25 @@ jobs:
 
   notify_result:
     needs: deploy
-    if: always() # send both on success or failure
     runs-on: ubuntu-latest
 
     steps:
-      - name: Send Deployment Result Email
+      - name: Send Failure Email
+        if: failure()
         uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 587
           username: dylan.ramirez@lansa.com
           password: "brtt cicb ylhr pqiz"
-          to: "devops@example.com"
-          subject: "Deployment Result - ${{ job.status }} for ${{ env.APP_NAME }}"
+          from: "Pipeline Bot <devops@lansa.com>"
+          to: dylan.ramirez@lansa.com
+          subject: "❌ CI Pipeline FAILED"
           body: |
-            Deployment status: ${{ job.status }}
+            The GitHub Actions CI pipeline has FAILED.
+            Please investigate immediately.
 
-            Repo: ${{ github.repository }}
-            Commit: ${{ github.sha }}
-            Workflow Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+            Repository: ${{ github.repository }}
+            Run ID: ${{ github.run_id }}
+            URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
-            This is an automated notification.
