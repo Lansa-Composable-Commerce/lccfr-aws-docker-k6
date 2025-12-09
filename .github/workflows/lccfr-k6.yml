@@ -1,14 +1,8 @@
-#Compare Test to GitLab #2
-name: Build and Deploy
+name: Build, Test, Approve and Deploy
 
 on:
   push:
-    branches:
-      - main
-    tags:
-      - "*"
-
-  workflow_dispatch:
+    branches: [ main ]
 
 permissions:
   contents: write
@@ -32,10 +26,8 @@ env:
   INFLUXDB_PASS: ${{ secrets.INFLUXDB_PASS }}
 
 jobs:
-  build_and_push:
+  build:
     runs-on: ubuntu-latest
-    outputs:
-      full_image: ${{ steps.vars.outputs.full_image }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -222,9 +214,8 @@ jobs:
             build-manifest.json
             release-notes.md
 
-  performance-test:
-    runs-on: ubuntu-latest
-    needs: build_and_push
+  tests:
+    needs: build
     env:
       IMAGE_NAME:  ${{ needs.build_and_push.outputs.full_image }} 
     outputs:
@@ -242,56 +233,49 @@ jobs:
         run: |
           echo "Waiting for approval inside GitHub → Environments → manual-testing"
 
-      # ----------------------------------------------------
-      # SUCCESS NOTIFICATION
-      # ----------------------------------------------------
-      - name: Send Success Email
-        if: success()
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 587
-          username: dylan.ramirez@lansa.com
-          password: "brtt cicb ylhr pqiz"
-          from: dylan.ramirez@lansa.com
-          to: cenext.lansa@gmail.com
-          subject: "GitHub CI Pipeline Success"
-          body: |
-            CI/CD Notification
-            Repository: ${{ github.repository }}
-            Performance Test Result: Success
-            Run URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-      # ----------------------------------------------------
-      # FAILURE NOTIFICATION (FIXED)
-      # ----------------------------------------------------
-      - name: Send Failure Email
-        if: failure()
-        uses: dawidd6/action-send-mail@v3
-        with:
-          server_address: smtp.gmail.com
-          server_port: 587
-          username: dylan.ramirez@lansa.com
-          password: "brtt cicb ylhr pqiz"
-          from: "Pipeline Bot <devops@lansa.com>"
-          to: dylan.ramirez@lansa.com
-          subject: "❌ CI Pipeline FAILED"
-          body: |
-            The GitHub Actions CI pipeline has FAILED.
-            Please investigate immediately.
-
-            Repository: ${{ github.repository }}
-            Run ID: ${{ github.run_id }}
-            URL: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
-
-  deploy:
+  notify_predeploy:
+    needs: tests
     runs-on: ubuntu-latest
-    needs:  performance-test # 👈 deploy only happens if build_and_push pass
+    steps:
+      - name: Send Pre-Deployment Email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: dylan.ramirez@lansa.com
+          password: "brtt cicb ylhr pqiz"
+          to: "dylan.ramirez@lansa.com,patrick.fleming@lansa.com"
+          subject: "Approval Required for Deployment of ${{ env.APP_NAME }}"
+          body: |
+            Deployment is pending approval.
+
+            Repo: ${{ github.repository }}
+            Commit: ${{ github.sha }}
+            Actor: ${{ github.actor }}
+            Workflow Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            Please review and approve deployment in the 'production' environment.
+
+  approve_before_deploy:
+    needs: notify_predeploy
+    runs-on: ubuntu-latest
+    
+    # ❗ This triggers the REAL GitHub approval gate
     environment:
       name: production
-    env:  
-      FULL_IMAGE: ${{ needs.performance-test.outputs.docker_image }}
+
     steps:
+      - name: Waiting for Manual Approval
+        run: echo "This job will pause until approved in the 'production' environment."
+
+  deploy:
+    needs: approve_before_deploy
+    runs-on: ubuntu-latest
+    env:  
+          FULL_IMAGE: ${{ needs.performance-test.outputs.docker_image }}
+    steps:
+      - uses: actions/checkout@v4
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -337,3 +321,27 @@ jobs:
             --cluster "$ECS_CLUSTER" \
             --services "$ECS_SERVICE"
   
+
+  notify_result:
+    needs: deploy
+    if: always() # send both on success or failure
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Send Deployment Result Email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 587
+          username: dylan.ramirez@lansa.com
+          password: "brtt cicb ylhr pqiz"
+          to: "devops@example.com"
+          subject: "Deployment Result - ${{ job.status }} for ${{ env.APP_NAME }}"
+          body: |
+            Deployment status: ${{ job.status }}
+
+            Repo: ${{ github.repository }}
+            Commit: ${{ github.sha }}
+            Workflow Run: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            This is an automated notification.
