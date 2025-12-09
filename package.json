@@ -1,6 +1,6 @@
 {
   "name": "prototype",
-  "version": "0.1.21",
+  "version": "0.1.22",
   "private": true,
   "proxy": "http://localhost:3000",
   "scripts": {
