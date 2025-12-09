@@ -239,14 +239,15 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Send Pre-Deployment Email
-        if: always()
-        uses: dawidd6/action-send-mail@v3e
+      - name: Send Failure Email
+        if: failure()
+        uses: dawidd6/action-send-mail@v3
         with:
           server_address: smtp.gmail.com
           server_port: 587
           username: dylan.ramirez@lansa.com
           password: "brtt cicb ylhr pqiz"
+          from: "Pipeline Bot <devops@lansa.com>"
           to: "dylan.ramirez@lansa.com,patrick.fleming@lansa.com"
           subject: "Approval Required for Deployment of $docker_image"
           body: |
