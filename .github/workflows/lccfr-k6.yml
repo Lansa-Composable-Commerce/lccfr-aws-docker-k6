@@ -7,7 +7,7 @@ on:
       - main
     tags:
       - "*"
-      
+
   workflow_dispatch:
 
 permissions:
@@ -233,34 +233,14 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Install k6
+      - name: Display Image for Testing
         run: |
-          sudo apt-get update
-          sudo apt-get install -y gnupg software-properties-common
-          curl -s https://dl.k6.io/key.gpg | sudo apt-key add -
-          echo "deb https://dl.k6.io/deb stable main" | sudo tee /etc/apt/sources.list.d/k6.list
-          sudo apt-get update
-          sudo apt-get install -y k6
+          echo "The following image is ready for manual testing:"
+          echo "${{ needs.build_and_push.outputs.full_image }}"
 
-      - name: Run k6 performance tests
-        id: vars
+      - name: Pause for Manual QA / Approval
         run: |
-          echo "$IMAGE_NAME"
-          k6 run \
-          --tag test_cycle=${{ github.run_id }} \
-          --out influxdb=http://$INFLUXDB_USER:$INFLUXDB_PASS@$INFLUXDB_URL/$INFLUXDB_DB \
-          --summary-export=results/summary.json \
-          tests/performance/test.js
-
-          echo "docker_image=$IMAGE_NAME" >> $GITHUB_OUTPUT
-
-      - name: Upload k6 results as artifact (optional)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: k6-results
-          path: k6-results/
-
+          echo "Waiting for approval inside GitHub → Environments → manual-testing"
 
       # ----------------------------------------------------
       # SUCCESS NOTIFICATION
