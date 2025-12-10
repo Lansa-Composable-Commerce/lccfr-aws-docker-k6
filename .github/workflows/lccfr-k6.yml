@@ -46,9 +46,9 @@ jobs:
       - name: Log in to GHCR
         uses: docker/login-action@v3
         with:
-          registry: ${GHCR}
-          username: ${GH_USER }
-          password: ${secrets.GH_PASS}
+          registry: ${{ vars.GHCR }}
+          username: ${{ vars.GH_USER }}
+          password: ${{ secrets.GH_PASS }}
 
       - name: Bump version in package.json
         run: |
@@ -264,7 +264,7 @@ jobs:
           username: dylan.ramirez@lansa.com
           password: "brtt cicb ylhr pqiz"
           from: "Pipeline Bot <devops@lansa.com>"
-          to: "dylan.ramirez@lansa.com,patrick.fleming@lansa.com"
+          to: "dylan.ramirez@lansa.com"
           subject: "Approval Required for Deployment of $docker_image"
           body: |
             Deployment is pending approval.
