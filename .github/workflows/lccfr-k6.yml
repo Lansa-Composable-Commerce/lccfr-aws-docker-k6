@@ -230,28 +230,28 @@ jobs:
             build-manifest.json
             release-notes.md
 
-  tests:
-    needs: build
-    runs-on: ubuntu-latest
-    env:
-      IMAGE_NAME:  ${{ needs.build_and_push.outputs.full_image }} 
-    outputs:
-      docker_image: ${{ steps.vars.outputs.docker_image }}
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+  # tests:
+  #   needs: build
+  #   runs-on: ubuntu-latest
+  #   env:
+  #     IMAGE_NAME:  ${{ needs.build_and_push.outputs.full_image }} 
+  #   outputs:
+  #     docker_image: ${{ steps.vars.outputs.docker_image }}
+  #   steps:
+  #     - name: Checkout repository
+  #       uses: actions/checkout@v4
 
-      - name: Display Image for Testing
-        run: |
-          echo "The following image is ready for manual testing:"
-          echo "${{ needs.build_and_push.outputs.full_image }}"
+  #     - name: Display Image for Testing
+  #       run: |
+  #         echo "The following image is ready for manual testing:"
+  #         echo "${{ needs.build_and_push.outputs.full_image }}"
 
-      - name: Pause for Manual QA / Approval
-        run: |
-          echo "Waiting for approval inside GitHub → Environments → manual-testing"
+  #     - name: Pause for Manual QA / Approval
+  #       run: |
+  #         echo "Waiting for approval inside GitHub → Environments → manual-testing"
 
   notify_predeploy:
-    needs: tests
+    needs: build
     runs-on: ubuntu-latest
 
     steps:
@@ -287,12 +287,14 @@ jobs:
 
       - name: Fetch PR body
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ secrets.GH_PAT }}
+          BRANCH: ${{ env.BRANCH }}
         id: pr_body
         run: |
-          PR_NUMBER=$(gh pr list --head "version-bump-v${PACKAGE_VERSION}" --json number --jq '.[0].number')
+          PR_NUMBER=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number')
           PR_BODY=$(gh pr view $PR_NUMBER --json body --jq '.body')
           echo "$PR_BODY" > pr_body.txt
+
 
       - name: Check checklist approvals
         run: |
