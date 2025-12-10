@@ -23,7 +23,7 @@ env:
   GHCR: ${{ vars.GHCR }}
   GHCR_USER: ${{ vars.GH_USER }}
   GH_PAT: ${{ secrets.GH_PASS }}
-  GH_TOKEN: ${{ secrets.GH_PAT }}
+  
 
   # Secrets
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -98,6 +98,8 @@ jobs:
           fi
 
       - name: Commit & push version bump
+        env:
+          GH_TOKEN: ${{ secrets.GH_PAT }}
         run: |
           git config user.name "dylanrmrz"
           git config user.email "dylan.ramirez@lansa.com"
@@ -279,6 +281,8 @@ jobs:
 
   approve_before_deploy:
     needs: tests
+    env:
+      GH_TOKEN: ${{ secrets.GH_PAT }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
