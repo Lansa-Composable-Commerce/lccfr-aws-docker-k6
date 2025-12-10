@@ -1,4 +1,4 @@
-# Trigger Test 3
+# Trigger Test 4
 name: Build, Test, Approve and Deploy
 
 on:
@@ -97,7 +97,7 @@ jobs:
           fi
       - name: Commit & create PR
         env:
-          GH_TOKEN: ${{ github.token }}
+          GH_TOKEN: ${{ env.GH_PAT }}
         run: |
           git config user.name "dylanrmrz"
           git config user.email "dylan.ramirez@lansa.com"
