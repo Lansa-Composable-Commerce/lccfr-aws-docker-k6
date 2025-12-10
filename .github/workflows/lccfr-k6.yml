@@ -97,7 +97,7 @@ jobs:
           fi
       - name: Commit & create PR
         env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           git config user.name "dylanrmrz"
           git config user.email "dylan.ramirez@lansa.com"
