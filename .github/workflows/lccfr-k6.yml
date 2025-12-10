@@ -1,4 +1,4 @@
-# Scene B
+# Trigger Test
 name: Build, Test, Approve and Deploy
 
 on:
