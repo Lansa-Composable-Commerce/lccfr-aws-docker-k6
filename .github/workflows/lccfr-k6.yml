@@ -23,6 +23,7 @@ env:
   GHCR: ${{ vars.GHCR }}
   GHCR_USER: ${{ vars.GH_USER }}
   GH_PAT: ${{ secrets.GH_PASS }}
+  GH_TOKEN: ${{ secrets.GH_PAT }}
 
   # Secrets
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
