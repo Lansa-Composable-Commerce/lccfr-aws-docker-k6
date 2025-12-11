@@ -4,9 +4,6 @@ name: Build, Test, Approve and Deploy
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
-
 
 permissions:
   contents: write
@@ -301,9 +298,10 @@ jobs:
 
 
   deploy:
-    needs: build
-    if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
+    needs: approve_before_deploy
     runs-on: ubuntu-latest
+    env: 
+      FULL_IMAGE: ${{ needs.performance-test.outputs.docker_image }}
     steps:
       - uses: actions/checkout@v4
 
