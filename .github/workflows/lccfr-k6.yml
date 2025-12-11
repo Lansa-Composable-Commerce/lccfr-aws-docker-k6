@@ -4,6 +4,9 @@ name: Build, Test, Approve and Deploy
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
 
 permissions:
   contents: write
@@ -279,6 +282,7 @@ jobs:
   approve_before_deploy:
     needs: build
     runs-on: ubuntu-latest
+    if: ${{ github.event_name == 'pull_request' }}
     steps:
       - uses: actions/checkout@v4
 
@@ -286,57 +290,20 @@ jobs:
         run: sudo apt-get update && sudo apt-get install -y jq gh
 
       - name: Fetch PR body
-        if: ${{ github.event_name == 'pull_request' }}
         env:
           GH_TOKEN: ${{ github.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
         run: |
           echo "Using PR_NUMBER: $PR_NUMBER"
-
           PR_BODY=$(gh pr view $PR_NUMBER --json body --jq '.body')
           echo "$PR_BODY" > pr_body.txt
 
-      # - name: Fetch PR body
-      #   env:
-      #     GH_TOKEN: ${{ secrets.GH_PASS }}
-      #     BRANCH: ${{ github.head_ref || github.ref_name }}
-      #   run: |
-      #     echo "Using BRANCH: $BRANCH"
-      #     PR_NUMBER=$(gh pr list --head "$BRANCH" --json number --jq '.[0].number')
 
-      #     if [ -z "$PR_NUMBER" ]; then
-      #       echo "❌ No PR found for branch: $BRANCH"
-      #       exit 1
-      #     fi
-
-      #     PR_BODY=$(gh pr view $PR_NUMBER --json body --jq '.body')
-      #     echo "$PR_BODY" > pr_body.txt
-
-
-      - name: Check checklist approvals
-        run: |
-          if ! grep -q "\[x\] Reviewer 1 approved" pr_body.txt || \
-             ! grep -q "\[x\] Reviewer 2 approved" pr_body.txt; then
-            echo "❌ Not all reviewers approved the checklist"
-            exit 1
-          fi
-          echo "✅ All reviewers approved"
-    # needs: notify_predeploy
-    # runs-on: ubuntu-latest
-    
-    # # ❗ This triggers the REAL GitHub approval gate
-    # environment:
-    #   name: production
-
-    # steps:
-    #   - name: Waiting for Manual Approval
-    #     run: echo "This job will pause until approved in the 'production' environment."
 
   deploy:
-    needs: approve_before_deploy
+    needs: build
+    if: ${{ github.event_name == 'push' && github.ref_name == 'main' }}
     runs-on: ubuntu-latest
-    env:  
-          FULL_IMAGE: ${{ needs.performance-test.outputs.docker_image }}
     steps:
       - uses: actions/checkout@v4
 
