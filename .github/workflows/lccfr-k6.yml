@@ -4,6 +4,8 @@ name: Build, Test, Approve and Deploy
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
 
 permissions:
   contents: write
