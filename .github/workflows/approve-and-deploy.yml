@@ -2,38 +2,111 @@ name: Approve & Deploy
 
 on:
   pull_request:
-    types: [opened, synchronize, reopened, ready_for_review]
     branches: [ main ]
+    types: [ opened, reopened, ready_for_review, synchronize ]
 
 permissions:
-  pull-requests: read
   contents: read
   deployments: write
+  pull-requests: read
+
+env:
+  # Shared environment variables
+  IMAGE_NAME: ${{ vars.IMAGE_NAME }}
+  NODE_ENV: ${{ vars.NODE_ENV }}
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
+  ECS_SERVICE: ${{ vars.ECS_SERVICE }}
+  TASK_FAMILY: ${{ vars.TASK_FAMILY }}
+  INFLUXDB_USER: ${{ vars.INFLUXDB_USER }}
+  INFLUXDB_URL: ${{ vars.INFLUXDB_URL }}
+  INFLUXDB_DB: ${{ vars.INFLUXDB_DB }}
+  GHCR: ${{ vars.GHCR }}
+  GHCR_USER: ${{ vars.GH_USER }}
+
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  INFLUXDB_PASS: ${{ secrets.INFLUXDB_PASS }}
+  GH_PAT: ${{ secrets.GH_PAT }}
 
 jobs:
 
-  approval:
+  approve:
     runs-on: ubuntu-latest
     environment:
-      name: production   # triggers approval rules
+      name: production  # Triggers GitHub environment approval
     steps:
       - uses: actions/checkout@v4
 
-      - name: Display PR Details
-        env:
-          PR_NUM: ${{ github.event.pull_request.number }}
+      - name: Install CLI tools
         run: |
-          echo "PR Number: $PR_NUM"
-          echo "Title: ${{ github.event.pull_request.title }}"
-          echo "Author: ${{ github.event.pull_request.user.login }}"
+          sudo apt-get update
+          sudo apt-get install -y jq gh
+
+      - name: Show PR info
+        run: |
+          echo "PR Number: ${{ github.event.pull_request.number }}"
+          echo "PR Title: ${{ github.event.pull_request.title }}"
+          echo "PR Author: ${{ github.event.pull_request.user.login }}"
+
+      - name: Fetch PR body
+        run: |
+          gh pr view ${{ github.event.pull_request.number }} --json body --jq '.body' > pr_body.txt
 
   deploy:
-    needs: approval
+    needs: approve
     if: ${{ github.event.pull_request.merged == true }}
     runs-on: ubuntu-latest
+    environment:
+      name: production
     steps:
       - uses: actions/checkout@v4
 
-      - name: Deploy to ECS
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ env.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ env.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.GHCR }}
+          username: ${{ env.GHCR_USER }}
+          password: ${{ secrets.GH_PAT }}
+
+      - name: Deploy Docker image to ECS
         run: |
-          echo "Deploying version..."
+          IMAGE_TAG=$(gh pr view ${{ github.event.pull_request.number }} --json headRefName --jq '.headRefName')
+          FULL_IMAGE="${IMAGE_NAME}:${IMAGE_TAG}"
+          echo "Deploying image: $FULL_IMAGE"
+
+          # Describe task definition
+          aws ecs describe-task-definition --task-definition "$TASK_FAMILY" --query taskDefinition > td.json
+
+          # Update container image
+          jq --arg IMAGE "$FULL_IMAGE" '
+            .containerDefinitions[0].image = $IMAGE
+            | {family: .family, networkMode: .networkMode, executionRoleArn: .executionRoleArn, containerDefinitions: .containerDefinitions, requiresCompatibilities: .requiresCompatibilities, cpu: .cpu, memory: .memory}
+            + (if .taskRoleArn != null then {taskRoleArn: .taskRoleArn} else {} end)
+          ' td.json > new-td.json
+
+          # Register new task definition
+          aws ecs register-task-definition --cli-input-json file://new-td.json
+
+          # Update ECS service
+          aws ecs update-service \
+            --cluster "$ECS_CLUSTER" \
+            --service "$ECS_SERVICE" \
+            --task-definition "$TASK_FAMILY" \
+            --force-new-deployment
+
+          # Wait until service is stable
+          aws ecs wait services-stable \
+            --cluster "$ECS_CLUSTER" \
+            --services "$ECS_SERVICE"
+
+      - name: Notify deployment success
+        run: |
+          echo "✅ Deployment completed for $FULL_IMAGE"
