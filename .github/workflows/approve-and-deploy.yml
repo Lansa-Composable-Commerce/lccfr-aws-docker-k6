@@ -1,66 +1,54 @@
-name: Approve & Deploy
+name: Deploy After Merge
 
 on:
-  pull_request:
-    branches: [ main ]
-    types: [ opened, reopened, ready_for_review, synchronize ]
+  push:
+    branches:
+      - main   # 🔥 Runs only when PR is merged into main
 
 permissions:
   contents: read
   deployments: write
-  pull-requests: read
 
 env:
-  # Shared environment variables
   IMAGE_NAME: ${{ vars.IMAGE_NAME }}
   NODE_ENV: ${{ vars.NODE_ENV }}
   AWS_REGION: ${{ vars.AWS_REGION }}
   ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
   ECS_SERVICE: ${{ vars.ECS_SERVICE }}
   TASK_FAMILY: ${{ vars.TASK_FAMILY }}
-  INFLUXDB_USER: ${{ vars.INFLUXDB_USER }}
-  INFLUXDB_URL: ${{ vars.INFLUXDB_URL }}
-  INFLUXDB_DB: ${{ vars.INFLUXDB_DB }}
   GHCR: ${{ vars.GHCR }}
   GHCR_USER: ${{ vars.GH_USER }}
 
   AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
   AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-  INFLUXDB_PASS: ${{ secrets.INFLUXDB_PASS }}
-  GH_PAT: ${{ secrets.GH_PASS }}
+  GH_PAT: ${{ secrets.GH_PAT }}
 
 jobs:
-
-  approve:
-    runs-on: ubuntu-latest
-    environment:
-      name: production  # Triggers GitHub environment approval
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Install CLI tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y jq gh
-
-      - name: Show PR info
-        run: |
-          echo "PR Number: ${{ github.event.pull_request.number }}"
-          echo "PR Title: ${{ github.event.pull_request.title }}"
-          echo "PR Author: ${{ github.event.pull_request.user.login }}"
-
-      - name: Fetch PR body
-        run: |
-          gh pr view ${{ github.event.pull_request.number }} --json body --jq '.body' > pr_body.txt
-
   deploy:
-    needs: approve
-    if: ${{ github.event.pull_request.merged == true }}
     runs-on: ubuntu-latest
+
+    # 🔥 This makes GitHub require environment approval
     environment:
       name: production
+
     steps:
       - uses: actions/checkout@v4
+
+      - name: Extract version from commit message
+        id: extract_version
+        run: |
+          COMMIT_MSG=$(git log -1 --pretty=%B)
+          echo "Commit message: $COMMIT_MSG"
+
+          VERSION=$(echo "$COMMIT_MSG" | grep -oP "v\d+\.\d+\.\d+" || true)
+
+          if [ -z "$VERSION" ]; then
+            echo "❌ Could not extract version from commit message"
+            exit 1
+          fi
+
+          echo "VERSION=$VERSION" >> $GITHUB_ENV
+          echo "Extracted version: $VERSION"
 
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -74,39 +62,4 @@ jobs:
         with:
           registry: ${{ env.GHCR }}
           username: ${{ env.GHCR_USER }}
-          password: ${{ secrets.GH_PAT }}
-
-      - name: Deploy Docker image to ECS
-        run: |
-          IMAGE_TAG=$(gh pr view ${{ github.event.pull_request.number }} --json headRefName --jq '.headRefName')
-          FULL_IMAGE="${IMAGE_NAME}:${IMAGE_TAG}"
-          echo "Deploying image: $FULL_IMAGE"
-
-          # Describe task definition
-          aws ecs describe-task-definition --task-definition "$TASK_FAMILY" --query taskDefinition > td.json
-
-          # Update container image
-          jq --arg IMAGE "$FULL_IMAGE" '
-            .containerDefinitions[0].image = $IMAGE
-            | {family: .family, networkMode: .networkMode, executionRoleArn: .executionRoleArn, containerDefinitions: .containerDefinitions, requiresCompatibilities: .requiresCompatibilities, cpu: .cpu, memory: .memory}
-            + (if .taskRoleArn != null then {taskRoleArn: .taskRoleArn} else {} end)
-          ' td.json > new-td.json
-
-          # Register new task definition
-          aws ecs register-task-definition --cli-input-json file://new-td.json
-
-          # Update ECS service
-          aws ecs update-service \
-            --cluster "$ECS_CLUSTER" \
-            --service "$ECS_SERVICE" \
-            --task-definition "$TASK_FAMILY" \
-            --force-new-deployment
-
-          # Wait until service is stable
-          aws ecs wait services-stable \
-            --cluster "$ECS_CLUSTER" \
-            --services "$ECS_SERVICE"
-
-      - name: Notify deployment success
-        run: |
-          echo "✅ Deployment completed for $FULL_IMAGE"
+          passw
