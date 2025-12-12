@@ -57,14 +57,16 @@ jobs:
           git commit -m "ci: version bump to $NEW_VERSION"
           git push origin $BRANCH
 
+      - name: Configure git identity
+        run: |
+          git config --global user.name "dylanrmrz"
+          git config --global user.email "dylan.ramirez@lansa.com"
+
       - name: Create PR
         id: create_pr
         env:
           GH_TOKEN: ${{ env.GH_PAT }}
         run: |
-          git config user.name "dylanrmrz"
-          git config user.email "dylan.ramirez@lansa.com"
-
           BRANCH=$(git branch --show-current)
           echo "pr_branch=$BRANCH" >> $GITHUB_OUTPUT
 
