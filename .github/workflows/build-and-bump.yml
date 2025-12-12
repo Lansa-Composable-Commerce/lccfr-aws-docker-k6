@@ -6,7 +6,28 @@ on:
 
 permissions:
   contents: write
-  pull-requests: write
+  packages: write
+
+env:
+  # Variables
+  IMAGE_NAME: ${{ vars.IMAGE_NAME }}
+  NODE_ENV: ${{ vars.NODE_ENV }} 
+  AWS_REGION: ${{ vars.AWS_REGION }}
+  ECS_CLUSTER: ${{ vars.ECS_CLUSTER }}
+  ECS_SERVICE: ${{ vars.ECS_SERVICE }}
+  TASK_FAMILY: ${{ vars.TASK_FAMILY }}
+  INFLUXDB_USER: ${{ vars.INFLUXDB_USER }}
+  INFLUXDB_URL: ${{ vars.INFLUXDB_URL }}
+  INFLUXDB_DB: ${{ vars.INFLUXDB_DB }}
+  GHCR: ${{ vars.GHCR }}
+  GHCR_USER: ${{ vars.GH_USER }}
+  GH_PAT: ${{ secrets.GH_PASS }}
+  
+
+  # Secrets
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  INFLUXDB_PASS: ${{ secrets.INFLUXDB_PASS }}
 
 jobs:
   build:
@@ -39,11 +60,11 @@ jobs:
       - name: Create PR
         id: create_pr
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ env.GH_PAT }}
         run: |
           git config user.name "dylanrmrz"
           git config user.email "dylan.ramirez@lansa.com"
-          
+
           BRANCH=$(git branch --show-current)
           echo "pr_branch=$BRANCH" >> $GITHUB_OUTPUT
 
