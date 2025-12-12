@@ -41,6 +41,9 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          git config user.name "dylanrmrz"
+          git config user.email "dylan.ramirez@lansa.com"
+          
           BRANCH=$(git branch --show-current)
           echo "pr_branch=$BRANCH" >> $GITHUB_OUTPUT
 
