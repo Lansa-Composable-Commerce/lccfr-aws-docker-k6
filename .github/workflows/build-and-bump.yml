@@ -1,0 +1,52 @@
+name: Build & Create PR
+
+on:
+  push:
+    branches: [ main ]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      pr_branch: ${{ steps.create_pr.outputs.pr_branch }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Bump version
+        run: |
+          CURRENT=$(jq -r ".version" package.json)
+          IFS="." read -r MAJOR MINOR PATCH <<< "$CURRENT"
+          PATCH=$((PATCH+1))
+          NEW="$MAJOR.$MINOR.$PATCH"
+          jq --arg v "$NEW" '.version=$v' package.json > tmp.json
+          mv tmp.json package.json
+          echo "NEW_VERSION=$NEW" >> $GITHUB_ENV
+
+      - name: Commit & push version bump
+        run: |
+          BRANCH="bump-v${NEW_VERSION}-${{ github.run_id }}"
+          echo "pr_branch=$BRANCH" >> $GITHUB_OUTPUT
+          git switch -c $BRANCH
+          git add package.json
+          git commit -m "ci: version bump to $NEW_VERSION"
+          git push origin $BRANCH
+
+      - name: Create PR
+        id: create_pr
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          BRANCH=$(git branch --show-current)
+          echo "pr_branch=$BRANCH" >> $GITHUB_OUTPUT
+
+          gh pr create \
+            --title "ci: release v${NEW_VERSION}" \
+            --body "Automated version bump" \
+            --base main \
+            --head $BRANCH \
+            --reviewer dv-lansa,Lansa-jerson
