@@ -43,6 +43,9 @@ jobs:
         env:
           GH_TOKEN: ${{ env.GH_PAT }}
         run: |
+          git config user.name "dylanrmrz"
+          git config user.email "dylan.ramirez@lansa.com"
+          
           BRANCH="version-bump-v${PACKAGE_VERSION}-$(date +%s)"
           echo "pr_branch=$BRANCH" >> $GITHUB_OUTPUT
 
