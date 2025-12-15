@@ -27,7 +27,6 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
 
-    # 🔥 This makes GitHub require environment approval
     environment:
       name: production
 
@@ -62,4 +61,3 @@ jobs:
         with:
           registry: ${{ env.GHCR }}
           username: ${{ env.GHCR_USER }}
-          passw
